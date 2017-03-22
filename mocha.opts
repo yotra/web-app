@@ -1,0 +1,2 @@
+--require jsdom-global/register
+--timeout 2000

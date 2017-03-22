@@ -1,0 +1,15 @@
+{
+  "use": [
+    "postcss-import",
+    "postcss-apply",
+    "postcss-custom-properties",
+    "postcss-nested",
+    "postcss-color-function",
+    "postcss-calc",
+    "autoprefixer",
+    "postcss-reporter"
+  ],
+  "postcss-calc": {
+    "warnWhenCannotResolve": false
+  }
+}

@@ -1,0 +1,10 @@
+@import "./date-input.css";
+@import "./boolean-display.css";
+@import "./boolean-input.css";
+
+input {
+  display: block;
+  width: 100%;
+  padding: 6px 4px;
+  border: 1px solid #aaa;
+}

@@ -1,0 +1,54 @@
+{
+  "name": "web-app",
+  "version": "0.1.0",
+  "description": "Yotra web application",
+  "scripts": {
+    "lint": "eslint --ext .js src/. test/.",
+    "lint-css": "stylelint src/css/*.css src/controls/*.css",
+    "test": "mocha --opts mocha.opts test/*.spec.js",
+    "css": "postcss --config postcss-config.json -o dist/index.css src/index.pre.css",
+    "css-watch": "postcss --watch --config postcss-config.json -o dist/index.css src/index.pre.css",
+    "js": "browserify src/index.pre.js -o dist/index.es6.js",
+    "start": "nodemon --watch src/ --watch server/ --watch ../model-template/src/ --ext js,json ./server/server.js"
+  },
+  "author": "Ivan Reyvart",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/yotra/web-app.git",
+  "devDependencies": {
+    "autoprefixer": "6.x",
+    "babel-cli": "6.x",
+    "babel-plugin-transform-es2015-block-scoping": "6.x",
+    "babel-plugin-transform-es2015-classes": "6.x",
+    "babel-plugin-transform-es2015-template-literals": "6.x",
+    "browserify": "13.x",
+    "chai": "3.x",
+    "eslint": "3.x",
+    "eslint-config-airbnb-base": "10.x",
+    "eslint-plugin-import": "2.x",
+    "express": "4.x",
+    "jsdom": "9.x",
+    "jsdom-global": "2.x",
+    "mocha": "3.x",
+    "postcss-apply": "0.5.x",
+    "postcss-calc": "5.x",
+    "postcss-cli": "2.x",
+    "postcss-color-function": "3.x",
+    "postcss-custom-properties": "5.x",
+    "postcss-import": "9.x",
+    "postcss-nested": "1.x",
+    "postcss-reporter": "3.x",
+    "stylelint": "7.x",
+    "stylelint-config-standard": "16.x",
+    "uglify-js": "2.x"
+  },
+  "dependencies": {
+    "computed-state": "github:ivanrave/computed-state",
+    "extend": "^3.0.0",
+    "moment": "^2.17.1",
+    "normalize.css": "^5.0.0",
+    "pikaday": "^1.5.1"
+  },
+  "browserslist": [
+    "> 3%"
+  ]
+}

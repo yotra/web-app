@@ -1,0 +1,584 @@
+:root {
+  --tab-container-height: 60px;
+  --warning-height: 40px;
+  --warning-background: #ffe046;
+  --tab-count: 4;
+  --tab-background: #2baac2;
+  --tab-switch-width: calc(100% / var(--tab-count));
+  --age-width: 80px;
+
+  --warning-block: {
+    display: block;
+    position: absolute;
+    bottom: var(--tab-container-height);
+    right: 0;
+    left: 0;
+    text-align: center;
+
+    > label { display: none; }
+
+    &_content {
+      color: #000;
+      display: block;
+      line-height: 2.5;
+      background: var(--warning-background);
+      padding-right: 16px;
+      cursor: pointer;
+
+      &::after {
+        content: '\25BA';
+        position: absolute;
+        right: 2px;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        font-size: 2.4rem;
+        line-height: 1;
+        color: color(var(--warning-background) lightness(40%));
+      }
+    }
+  }
+
+  --tab-switch: {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    width: var(--tab-switch-width);
+    height: var(--tab-container-height);
+    z-index: 20;
+
+    &:checked ~ h2 {
+      background: color(var(--tab-background) blackness(30%)) !important;
+      color: #eee !important;
+    }
+  }
+
+  --tab-switch-header: {
+    background: var(--tab-background);
+    text-align: center;
+    border: 1px solid color(var(--tab-background) blackness(30%));
+    border-top: 0;
+    border-bottom: 0;
+    margin: 0;
+    color: #f5f5f5;
+    padding: 20px 4px;
+    font-size: 1rem;
+  }
+
+  --tab-content: {
+    position: relative;
+  }
+}
+
+input[type="radio"] {
+  z-index: 30 !important;
+  opacity: 0;
+  display: none;
+}
+
+/*
+скрыть все инпуты и кнопки
+- для добавления новых сущностей
+- для удаления
+ */
+[data-action=insertItem] { display: none; }
+[data-action=removeItem] { display: none; }
+
+/** Hide all properties by default */
+[data-prop-row] {
+  display: none;
+}
+
+#root {
+  height: 100%;
+
+  &_content {
+    height: calc(100% - var(--tab-container-height) - var(--warning-height));
+    overflow: auto;
+    padding: 12px;
+  }
+
+  > h1 {
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: absolute;
+    top: 0;
+    height: 16px;
+    width: 100%;
+    color: #f5f5f5;
+    font-size: 0.7rem;
+    padding-top: 2px;
+    text-transform: uppercase;
+    background: var(--tab-background);
+    text-align: center;
+    overflow: hidden;
+    z-index: 2;
+
+    /* box-shadow: 0 0 8px color(var(--tab-background) lightness(70%)); */
+  }
+
+  &__insuredPlacesWarning {
+    @apply --warning-block;
+
+    z-index: 10;
+  }
+
+  &__insuredEventWarning {
+    @apply --warning-block;
+
+    z-index: 9;
+  }
+
+  &__insurantsWarning {
+    @apply --warning-block;
+
+    z-index: 8;
+  }
+
+  &__offersWarning {
+    @apply --warning-block;
+
+    z-index: 6;
+
+    &_content {
+      background: yellowgreen;
+
+      &::after {
+        color: color(yellowgreen lightness(40%));
+      }
+    }
+  }
+
+  /* &__offersEndpoint {
+    display: block;
+    position: absolute;
+    bottom: 100px;
+
+    &_content {
+      display: block;
+      width: 300px;
+      overflow: auto;
+      word-wrap: break-word;
+    }
+  } */
+
+  &__insuredPlaces {
+    display: block;
+
+    & > h2 {
+      @apply --tab-switch;
+      @apply --tab-switch-header;
+
+      left: calc(var(--tab-switch-width) * 0);
+    }
+
+    &_content {
+      display: none;
+
+      @apply --tab-content;
+    }
+
+    & > [name=tabview] {
+      @apply --tab-switch;
+
+      left: calc(var(--tab-switch-width) * 0);
+    }
+
+    & > [name=tabview]:checked ~ &_content {
+      display: block;
+    }
+
+    & > [name=tabview]:checked ~ [data-action=insertItem] {
+      display: block;
+      margin-top: 30px;
+      width: 100%;
+      padding: 8px 4px;
+      background: #fff;
+    }
+
+    &_content {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      right: 0;
+      margin: 0 8px;
+
+      > [itemscope] {
+        display: block;
+        position: relative;
+
+        > [data-prop-row=name] {
+          display: block;
+
+          > label { display: none; }
+
+          > [itemprop] {
+            display: block;
+            border: 1px solid #aaa;
+            padding: 12px 8px;
+            background: #555;
+            color: #eee;
+            width: 100%;
+          }
+        }
+
+        > [data-action=removeItem] {
+          display: block;
+          position: absolute;
+          right: 5px;
+          top: 5px;
+        }
+      }
+    }
+  }
+
+  &__insuredEvent {
+    display: block;
+
+    &_content {
+      display: none;
+
+      @apply --tab-content;
+    }
+
+    & > [name=tabview] {
+      @apply --tab-switch;
+
+      left: calc(var(--tab-switch-width) * 1);
+    }
+
+    & > [name=tabview]:checked ~ &_content {
+      display: block;
+    }
+
+    & > h2 {
+      @apply --tab-switch;
+      @apply --tab-switch-header;
+
+      left: calc(var(--tab-switch-width) * 1);
+    }
+
+    &__startDate {
+      display: block;
+      position: absolute;
+      top: 30px;
+      left: 0;
+      width: 50%;
+    }
+
+    &__endDate {
+      display: block;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      width: 50%;
+    }
+
+    &__isStartDateBetween {
+      display: block;
+      position: absolute;
+      top: 80px;
+      left: 0;
+      width: 50%;
+
+      & > label {
+        display: none;
+        color: red;
+      }
+
+      & > span { display: none; }
+
+      &[data-state=false] > label { display: block; }
+    }
+
+    &__isEndDateBetween {
+      display: block;
+      position: absolute;
+      top: 80px;
+      right: 0;
+      width: 50%;
+
+      & > label {
+        display: none;
+        color: red;
+      }
+
+      & > span { display: none; }
+
+      &[data-state=false] > label { display: block; }
+    }
+
+    &__insuredDuration {
+      display: block;
+      position: absolute;
+      top: 200px;
+      left: 0;
+      right: 0;
+    }
+
+    &__isFixed {
+      display: block;
+      position: absolute;
+      top: 100px;
+      left: 0;
+      right: 0;
+      text-align: center;
+
+      > label {
+        display: inline-block;
+        margin: 4px 8px 0 0;
+      }
+
+      &_content {
+        display: inline-block;
+      }
+
+      &_content ~ div {
+        display: inline-block;
+      }
+    }
+  }
+
+  &__insurants {
+    display: block;
+
+    & > h2 {
+      @apply --tab-switch;
+      @apply --tab-switch-header;
+
+      left: calc(var(--tab-switch-width) * 2);
+    }
+
+    &_content {
+      display: none;
+
+      @apply --tab-content;
+    }
+
+    & > [name=tabview] {
+      @apply --tab-switch;
+
+      left: calc(var(--tab-switch-width) * 2);
+    }
+
+    & > [name=tabview]:checked ~ &_content {
+      display: block;
+    }
+
+    & > [name=tabview]:checked ~ [data-action=insertItem] {
+      display: block;
+      position: absolute;
+      top: 30px;
+      left: 10px;
+      width: var(--age-width);
+    }
+
+    &_content {
+      margin-top: 70px;
+
+      > [itemscope] {
+        position: relative;
+        height: 80px;
+
+        > [data-action=removeItem] {
+          display: block;
+          float: right;
+        }
+
+        > [data-prop-row=orderNumber] {
+          display: block;
+          position: absolute;
+          top: 0;
+
+          > label { font-weight: bold; }
+
+          > [itemprop] {
+            font-weight: bold;
+          }
+        }
+
+        > [data-prop-row=age] {
+          display: block;
+          position: absolute;
+          top: 30px;
+
+          > label {
+            display: inline-block;
+            margin-right: 20px;
+          }
+
+          > [itemprop] {
+            display: inline-block;
+            width: var(--age-width);
+          }
+        }
+      }
+    }
+  }
+
+  &__insurer {
+    display: block;
+
+    & > h2 {
+      @apply --tab-switch;
+      @apply --tab-switch-header;
+
+      left: calc(var(--tab-switch-width) * 3);
+    }
+
+    &_content {
+      display: none;
+    }
+
+    & > [name=tabview] {
+      @apply --tab-switch;
+
+      left: calc(var(--tab-switch-width) * 3);
+    }
+
+    & > [name=tabview]:checked ~ &_content {
+      display: block;
+    }
+  }
+
+  &__offers {
+    display: block;
+
+    & > h2 { display: none; }
+
+    &_content { display: none; }
+
+    & > [name=tabview]:checked ~ &_content {
+      display: block;
+    }
+
+    &__data {
+      display: block;
+
+      > h2 { display: none; }
+
+      &_content {
+        > [itemscope] {
+          position: relative;
+          margin-top: 14px;
+          box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+          border-radius: 5px;
+          height: 72px;
+
+          > [data-prop-row=companyName] {
+            display: block;
+
+            > label { display: none; }
+
+            > [itemprop] {
+              display: block;
+              position: absolute;
+              top: 8px;
+              right: 120px;
+              left: 8px;
+              bottom: 8px;
+              overflow: hidden;
+            }
+          }
+
+          > [data-prop-row=priceRub] {
+            display: block;
+
+            > label { display: none; }
+
+            > [itemprop] {
+              position: absolute;
+              top: 8px;
+              right: 8px;
+              width: 100px;
+              text-align: center;
+
+              &::after {
+                content: ' руб';
+              }
+            }
+          }
+
+          > [data-prop-row=infoUrl] {
+            display: block;
+
+            > label { display: none; }
+
+            > [itemprop] {
+              visibility: hidden;
+
+              &::after {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                width: 100px;
+                padding: 8px 12px;
+                visibility: visible;
+                background: #ffe100;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: underline;
+                border-radius: 4px;
+                color: #333;
+                display: block;
+                content: 'Купить';
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &__error { display: none; }
+
+    &__loading {
+      display: block;
+
+      > label { display: none; }
+
+      > [itemprop] {
+        display: none;
+
+        &[data-state=true] {
+          display: block;
+          visibility: hidden;
+
+          &::after {
+            visibility: visible;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            content: 'загрузка предложений от страховых компаний...';
+            text-align: center;
+            background: var(--warning-background);
+            font-size: 1.4rem;
+            padding: 40% 5% 0;
+            opacity: 0.4;
+          }
+        }
+      }
+    }
+  }
+}
+
+/*
+ Сущность и свойства
+Свойство не зависит от уровня вложенности.
+Идентификаторы определяют уровень вложенности.
+Идентификаторы инпутов соответствуют их аттрибуту name,
+который может использоваться HTML формами для передачи на сервер.
+Абсолютно плоскую структуру HTML трудно воссоздать.
+Поэтому в разметке присутствуют обёртки, такие как fieldset или вспомогательные элементы для скрытия/отображения полей, которые не могут быть воссозданы в css.
+Также каждому свойству сущности соответствует label, который необходимо отображать. В идеале должен быть единый элемент для каждого свойства:
+- label
+- content (input, span or complex)
+- show/hide button
+
+Инпуту присваивается имя
+
+Переход по табу - подобно скроллингу - это часть представления.
+
+*/

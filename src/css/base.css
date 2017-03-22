@@ -1,0 +1,38 @@
+@import "normalize.css";
+
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+
+  /** Чтобы акцентировать инпуты с белым фоном */
+  background: #eee;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+input[type="submit"] {
+  display: none;
+}
+
+/* .tab-next {
+  position: absolute;
+  bottom: 75px;
+  height: 35px;
+  text-align: center;
+  width: 120px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+} */
