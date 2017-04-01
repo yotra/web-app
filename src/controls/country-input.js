@@ -1,11 +1,9 @@
-/** String input */
+/** Country input */
 
 'use strict';
 
-const typeCountry = require('../../../vm-schema').types.Country;
-
-module.exports = function(props, doc) {
-  const elem = doc.createElement('select');
+module.exports = function(props, doc, typeChecker) {
+  const elem = document.createElement('select');
   // elem.type = 'text';
   // elem.placeholder = 'country id';
 
@@ -14,7 +12,7 @@ module.exports = function(props, doc) {
   emptyOption.value = '';
   elem.appendChild(emptyOption);
 
-  typeCountry.allowed.forEach(function(c) {
+  typeChecker.allowed.forEach(function(c) {
     const elemOption = document.createElement('option');
     elemOption.value = c.id;
     elemOption.textContent = c.name;

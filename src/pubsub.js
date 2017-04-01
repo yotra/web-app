@@ -1,7 +1,7 @@
 'use strict';
 
 const entityBuilder = require('./controls/entity-builder');
-const types = require('../../vm-schema').types;
+const typeCheckers = require('../../vm-schema').types;
 
 const getTypedValue = function(elem) {
   switch (elem.type) {
@@ -74,7 +74,7 @@ module.exports = function(rootContainer, store) {
     const itemProp = elem.getAttribute('itemprop');
 
     // validate propValue by schemaType
-    if (propValue !== null && types[schemaType].isValid(propValue) === false) {
+    if (propValue !== null && typeCheckers[schemaType].isValid(propValue) === false) {
       alert('invalid_type: ' + schemaType + ' ' + propValue);
 
       // if store.value already null: nothing changes
@@ -169,7 +169,8 @@ module.exports = function(rootContainer, store) {
     entityBuilder(rootContainer,
                   [],
                   'FinancialProduct',
-                  stateFresh);
+                  stateFresh,
+                  typeCheckers);
   });
 };
 

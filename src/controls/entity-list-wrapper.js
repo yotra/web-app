@@ -4,7 +4,7 @@
 const SEPAR = '__';
 
 module.exports = {
-  updateItems: function(elemSection, entityList, entitySchema, pathLevels, buildEntityElem) {
+  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, buildEntityElem) {
     if (!elemSection) {
       throw new Error('required_elemSection');
     }
@@ -43,7 +43,8 @@ module.exports = {
       const elemEntity = buildEntityElem(elemSection,
                                          entityPathLevels,
                                          entitySchema,
-                                         entity);
+                                         entity,
+                                         typeCheckers);
 
       const btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
 

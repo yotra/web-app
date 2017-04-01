@@ -86,11 +86,12 @@ const calculateDisplay = function(tag) {
 };
 
 module.exports = {
-  createInput: function(propType) {
+  createInput: function(propType, typeChecker) {
     const tag = propType.toLowerCase() + '-input';
 
     const elemClass = calculateInput(tag);
-    const elem = elemClass({}, document); // empty props
+
+    const elem = elemClass({}, document, typeChecker); // empty props
 
     elem.setAttribute('data-schema-type', propType);
 
@@ -98,11 +99,12 @@ module.exports = {
     elem.className = tag;
     return elem;
   },
-  createDisplay: function(propType) {
+  createDisplay: function(propType, typeChecker) {
     const tag = propType.toLowerCase() + '-display';
 
     const elemClass = calculateDisplay(tag);
-    const elem = elemClass({}, document); // empty props
+
+    const elem = elemClass({}, document, typeChecker); // empty props
 
     elem.setAttribute('data-schema-type', propType);
 

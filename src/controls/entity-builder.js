@@ -1,11 +1,13 @@
-/** Contains a list of simple inputs, according entity properties */
+/**
+ * Contains a list of simple inputs, according entity properties
+ * @module
+ */
 
 'use strict';
 
 const propFactory = require('./prop-factory');
-const controls = require('../controls-setter');
+const controlsSetter = require('./controls-setter');
 const microdata = require('./helpers/microdata');
-
 const propRow = require('./prop-row');
 
 const entityListWrapper = require('./entity-list-wrapper');
@@ -53,7 +55,12 @@ const destroyEntityElem = function(elemRow,
 const buildEntityElem = function(elemRow,
                                  entityPathLevels,
                                  entitySchema,
-                                 entity) {
+                                 entity,
+                                 typeCheckers) {
+  if (!typeCheckers) {
+    throw new Error('required_typeCheckers');
+  }
+
   // Если элемент уже существует, его надо обновить, а не строить заново
   // Передавать родительский компонент
   // По нему определять существование и вставлять в него же
@@ -88,7 +95,7 @@ const buildEntityElem = function(elemRow,
 
   // console.log('elemEntityContent', elemEntityContent);
   // update or create
-  buildElementsFromSettings(elemEntity, entityPathLevels, entity); // eslint-disable-line
+  buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers); // eslint-disable-line
 
   return elemEntity;
 };
@@ -105,7 +112,8 @@ const buildEntityListElem = function(elemRow,
                                      pathLevels,
                                      entitySchema,
                                      entitySettings,
-                                     entityList) {
+                                     entityList,
+                                     typeCheckers) {
   if (pathLevels.length < 1) {
     throw new Error('required_path_levels_non_empty');
   }
@@ -145,7 +153,8 @@ const buildEntityListElem = function(elemRow,
     const idSetting = entitySettings.id;
     const idPropType = idSetting.type; // 'Country' | 'Integer'
 
-    const elemInsertId = propFactory.createInput(idPropType);
+    const typeChecker = typeCheckers[idPropType];
+    const elemInsertId = propFactory.createInput(idPropType, typeChecker);
     elemInsertId.setAttribute('data-entity-list-path', pathLevels.join('.'));
     elemInsertId.setAttribute('data-action', 'insertItem');
 
@@ -173,6 +182,7 @@ const buildEntityListElem = function(elemRow,
                                 entityList,
                                 entitySchema,
                                 pathLevels,
+                                typeCheckers,
                                 buildEntityElem);
 
   return elemSection;
@@ -194,7 +204,8 @@ const buildSimpleElem = function(elemRow,
                                  propName,
                                  propType,
                                  propValue,
-                                 isDisplayOnly) {
+                                 isDisplayOnly,
+                                 typeCheckers) {
   const allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
 
   const propContentId = allPathLevels.join(SEPAR) + '_content';
@@ -202,10 +213,12 @@ const buildSimpleElem = function(elemRow,
   let elemProp = elemRow.querySelector('#' + propContentId);
 
   if (!elemProp) {
+    const typeChecker = typeCheckers[propType];
+
     if (isDisplayOnly) {
-      elemProp = propFactory.createDisplay(propType);
+      elemProp = propFactory.createDisplay(propType, typeChecker);
     } else {
-      elemProp = propFactory.createInput(propType);
+      elemProp = propFactory.createInput(propType, typeChecker);
     }
 
     elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
@@ -219,15 +232,15 @@ const buildSimpleElem = function(elemRow,
   }
 
   if (isDisplayOnly) {
-    controls.setDisplayValue(elemProp, propValue, propType);
+    controlsSetter.setDisplayValue(elemProp, propValue);
   } else {
-    controls.setInputValue(elemProp, propValue, propType);
+    controlsSetter.setInputValue(elemProp, propValue);
   }
 
   return elemProp;
 };
 
-const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue) {
+const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers) {
   if (!propName || !propSetting) {
     throw new Error('required_propName_propSetting');
   }
@@ -271,7 +284,8 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
       return buildEntityElem(elemRow,
                              pathLevels,
                              childEntitySchema,
-                             propValue);
+                             propValue,
+                             typeCheckers);
 
       // only root element without propName
       // itemprop must be outside of scope
@@ -293,14 +307,16 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                                  pathLevels,
                                  childEntitySchema,
                                  childEntitySettings,
-                                 propValue || []); // TODO: null array
+                                 propValue || [],
+                                 typeCheckers); // TODO: null array
     default:
       return buildSimpleElem(elemRow,
                              parentPathLevels,
                              propName,
                              propType,
                              propValue,
-                             isDisplayOnly);
+                             isDisplayOnly,
+                             typeCheckers);
   }
 };
 
@@ -314,7 +330,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
  * @param {Object} entity Like { firtsName: 'Jane' }
  * @returns {Object[]} List of DOM elements
  */
-const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity) {
+const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity, typeCheckers) {
   if (!entity || !elemEntity) {
     // entityElement can not exist without an entity
     throw new Error('entity_and_elemEntity_must_exist');
@@ -370,7 +386,7 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity)
       //   throw new Error('not_realized_update_prop');
     }
 
-    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue);
+    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers);
 
     if (anyElem) {
       microdata.markProperty(anyElem, propName);

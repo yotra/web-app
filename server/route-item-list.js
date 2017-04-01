@@ -8,6 +8,7 @@ const serializeDocument = require('jsdom').serializeDocument;
 const ComputedState = require('computed-state');
 
 const modelTemplate = require('../../vm-schema').policySchema;
+const typeCheckers = require('../../vm-schema').types;
 
 const entityBuilder = require('../src/controls/entity-builder');
 
@@ -73,7 +74,8 @@ module.exports = function (req, res) {
   entityBuilder(rootContainer,
                 [],
                 'FinancialProduct',
-                entity);
+                entity,
+                typeCheckers);
 
   const script = doc.createElement('script');
   script.src = './dist/index.es6.js';

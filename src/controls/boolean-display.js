@@ -2,7 +2,8 @@
 
 'use strict';
 
-module.exports = function(props, doc) {
-  var elem = doc.createElement('span');
+module.exports = function() {
+  const elem = document.createElement('span');
+  elem.setAttribute('data-state', '');
   return elem;
 };

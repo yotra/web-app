@@ -1,3 +1,7 @@
+/**
+ * Set property value: input or display
+ */
+
 'use strict';
 
 const reselectOptions = function(elem, value) {
@@ -21,15 +25,9 @@ const reselectOptions = function(elem, value) {
  * По сути является полифиллом для elem.setTypedValue -
  *   установкой типизированного значения (не строки) в элемент
  */
-const setInputValue = function(elemInput, value, propType) {
+const setInputValue = function(elemInput, value) {
   // no-param-reassign
   const elem = elemInput;
-
-  if (!propType) {
-    // throw new Error
-    console.warn('required_propType: ' + elem.id);
-    return;
-  }
 
   if (value === undefined) {
     throw new Error('value_can_not_be_undefined');
@@ -65,31 +63,23 @@ const setInputValue = function(elemInput, value, propType) {
   elem.title = String(value);
 };
 
-const setDisplayValue = function(elemDisplay, value, propType) {
+const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
-  if (!propType) {
-    // throw new Error
-    console.warn('required_propType: ' + elem.id);
-    return;
-  }
 
   if (value === undefined) {
     throw new Error('value_can_not_be_undefined');
   }
 
-  switch (propType) {
-    case 'Boolean':
-      elem.textContent = String(value);
-      elem.setAttribute('data-state', String(value));
-      // set to wrap
-      elem.parentNode.setAttribute('data-state', String(value));
-      break;
-    case 'URL':
-      elem.href = value || '';
-      elem.textContent = value || '';
-      break;
-    default:
-      elem.textContent = value === null ? '' : (value + '');
+  if (elem.tagName === 'A') {
+    elem.href = value || '';
+    elem.textContent = value || '';
+  } else if (elem.hasAttribute('data-state')) {
+    elem.textContent = String(value);
+    elem.setAttribute('data-state', String(value));
+    // set to wrap
+    elem.parentNode.setAttribute('data-state', String(value));
+  } else {
+    elem.textContent = value === null ? '' : (value + '');
   }
 
   // debugging

@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 
 const ComputedState = require('computed-state');
 const modelTemplate = require('../../vm-schema/index').policySchema;
+const typeCheckers = require('../../vm-schema/index').types;
 
 const pubsub = require('../src/pubsub');
 
@@ -44,7 +45,8 @@ describe('policy-markup-generator', function() {
     entityBuilder(container,
                   [],
                   'FinancialProduct',
-                  store.getEntity());
+                  store.getEntity(),
+                  typeCheckers);
 
     pubsub(container, store);
   });

@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 
 const ComputedState = require('computed-state');
 const modelTemplate = require('./person');
+const typeCheckers = require('../../vm-schema').types;
 
 const pubsub = require('../src/pubsub');
 
@@ -34,7 +35,8 @@ describe('person-markup-generator', function() {
     entityBuilder(container,
                   [],
                   'Person',
-                  store.getEntity());
+                  store.getEntity(),
+                  typeCheckers);
 
     pubsub(container, store);
   });
