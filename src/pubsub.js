@@ -170,7 +170,9 @@ module.exports = function(rootContainer, store) {
                   [],
                   'FinancialProduct',
                   stateFresh,
-                  typeCheckers);
+                  typeCheckers,
+                  // isGlobalDisplayOnly
+                  false);
   });
 };
 

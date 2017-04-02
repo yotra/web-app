@@ -36,7 +36,8 @@ describe('person-markup-generator', function() {
                   [],
                   'Person',
                   store.getEntity(),
-                  typeCheckers);
+                  typeCheckers,
+                  false);
 
     pubsub(container, store);
   });

@@ -24,6 +24,8 @@ inputPolyfill.init(rootContent);
 // добавление обработчиков в элементы для изменения данных хранилища
 pubsub(rootContent.parentNode, store);
 
+const policy = store.getEntity();
+
 /**
  * Вкладки (табы) не относятся к семантике. Это часть декоративного представления. Модель "Полис" не содержит сведений о группировке её свойств.
  * Переключение вкладок осуществляется пользователем вручную либо автоматически при загрузке:
@@ -39,11 +41,23 @@ const tabs = [
   'offers'
 ];
 
+tabs.forEach(function(tabName) {
+  const rowId = 'root__' + tabName;
+  const row = document.getElementById(rowId);
+  if (!row) {
+    throw new Error('no_row: ' + tabName);
+  }
+  const elemSwitch = document.createElement('input');
+  elemSwitch.type = 'radio';
+  elemSwitch.name = 'tabview';
+  elemSwitch.setAttribute('value', rowId);
+  row.insertBefore(elemSwitch, row.firstChild);
+});
+
 const goToTab = function(tabName) {
   rootContent.querySelector('input[name=tabview][value=root__' + tabName + ']').checked = true;
 };
 
-const policy = store.getEntity();
 let needTab;
 if (policy.isCalculable === true) {
   needTab = 'offers';

@@ -46,7 +46,8 @@ describe('policy-markup-generator', function() {
                   [],
                   'FinancialProduct',
                   store.getEntity(),
-                  typeCheckers);
+                  typeCheckers,
+                  false);
 
     pubsub(container, store);
   });

@@ -75,7 +75,9 @@ module.exports = function (req, res) {
                 [],
                 'FinancialProduct',
                 entity,
-                typeCheckers);
+                typeCheckers,
+                // isGlobalDisplayOnly
+                false);
 
   const script = doc.createElement('script');
   script.src = './dist/index.es6.js';

@@ -5257,13 +5257,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         //   }]
         // }
     }, { "../config": 1, "./helpers/ajax-loader": 7, "./insurant": 10, "./insured-event": 11, "./insured-place": 12, "./person": 13, "./policy-offer": 14, "extend": 3 }], 16: [function (require, module, exports) {
-        /**
-         * Every type has two representation: display and input
-         * - mobile-native
-         * - web
-         * - desktop
-         */
-
         'use strict';
 
         var allowedCountries = require('./data/countries');
@@ -7953,7 +7946,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @param {Object} defaultValues { firstName: 'Jane', ... } for this entity
          * @returns {Object} DOM element for this entity
          */
-        var buildEntityElem = function (elemRow, entityPathLevels, entitySchema, entity, typeCheckers) {
+        var buildEntityElem = function (elemRow, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly) {
             if (!typeCheckers) {
                 throw new Error('required_typeCheckers');
             }
@@ -7992,7 +7985,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             // console.log('elemEntityContent', elemEntityContent);
             // update or create
-            buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers); // eslint-disable-line
+            buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers, isGlobalDisplayOnly); // eslint-disable-line
 
             return elemEntity;
         };
@@ -8005,7 +7998,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @param {String} entitySchema A schema for an item of this collection, like 'Person'
          * @returns {Object} DOM element: list of items
          */
-        var buildEntityListElem = function (elemRow, pathLevels, entitySchema, entitySettings, entityList, typeCheckers) {
+        var buildEntityListElem = function (elemRow, pathLevels, entitySchema, entitySettings, entityList, typeCheckers, isGlobalDisplayOnly) {
             if (pathLevels.length < 1) {
                 throw new Error('required_path_levels_non_empty');
             }
@@ -8070,7 +8063,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 // elemRow.appendChild(elemInsert);
             }
 
-            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, buildEntityElem);
+            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem);
 
             return elemSection;
             // Update inner list
@@ -8100,16 +8093,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     elemProp = propFactory.createDisplay(propType, typeChecker);
                 } else {
                     elemProp = propFactory.createInput(propType, typeChecker);
+                    elemProp.name = buildInputName(parentPathLevels, propName);
+                    elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
                 }
 
-                elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
                 elemProp.id = propContentId;
-                // TODO: only for inputs
-                // insurer[payment][status] = 99
-                elemProp.name = buildInputName(parentPathLevels, propName);
                 elemRow.appendChild(elemProp);
-                // } else {
-                //   throw new Error('not_realized_update_input');
             }
 
             if (isDisplayOnly) {
@@ -8121,7 +8110,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return elemProp;
         };
 
-        var buildAnyElem = function (elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers) {
+        var buildAnyElem = function (elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly) {
             if (!propName || !propSetting) {
                 throw new Error('required_propName_propSetting');
             }
@@ -8129,9 +8118,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (!elemRow) {
                 throw new Error('required_elem_row');
             }
-
-            // isCalculatable or async (TODO)
-            var isDisplayOnly = !!propSetting.calculate || parentPathLevels.indexOf('data') >= 0 || propName === 'loading' || propName === 'error';
 
             var propType = propSetting.type;
 
@@ -8162,7 +8148,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                     // propValue = entity
-                    return buildEntityElem(elemRow, pathLevels, childEntitySchema, propValue, typeCheckers);
+                    return buildEntityElem(elemRow, pathLevels, childEntitySchema, propValue, typeCheckers, isPropDisplayOnly);
 
                 // only root element without propName
                 // itemprop must be outside of scope
@@ -8180,9 +8166,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     // propValue = [{ firstName: 'Jane' }]
                     // propValue can be null (for non-existing entities)
-                    return buildEntityListElem(elemRow, pathLevels, childEntitySchema, childEntitySettings, propValue || [], typeCheckers); // TODO: null array
+                    return buildEntityListElem(elemRow, pathLevels, childEntitySchema, childEntitySettings, propValue || [], typeCheckers, isPropDisplayOnly); // TODO: null array
                 default:
-                    return buildSimpleElem(elemRow, parentPathLevels, propName, propType, propValue, isDisplayOnly, typeCheckers);
+                    return buildSimpleElem(elemRow, parentPathLevels, propName, propType, propValue, isPropDisplayOnly, typeCheckers);
             }
         };
 
@@ -8196,7 +8182,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @param {Object} entity Like { firtsName: 'Jane' }
          * @returns {Object[]} List of DOM elements
          */
-        var buildElementsFromSettings = function (elemEntity, parentPathLevels, entity, typeCheckers) {
+        var buildElementsFromSettings = function (elemEntity, parentPathLevels, entity, typeCheckers, isGlobalDisplayOnly) {
             if (!entity || !elemEntity) {
                 // entityElement can not exist without an entity
                 throw new Error('entity_and_elemEntity_must_exist');
@@ -8218,6 +8204,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     throw new Error('required_label: ' + propName);
                 }
 
+                var isPropDisplayOnly = isGlobalDisplayOnly || !!propSetting.calculate || parentPathLevels.indexOf('data') >= 0 || propName === 'loading' || propName === 'error';
+
                 // TODO: root__
                 var allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
 
@@ -8238,7 +8226,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     } else {
                         elemLabel = document.createElement('label');
                         // if writable property, like <input>
-                        if (!propSetting.calculate) {
+                        if (!isPropDisplayOnly) {
                             elemLabel.htmlFor = propGlobalId + '_content';
                         }
                     }
@@ -8252,7 +8240,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     //   throw new Error('not_realized_update_prop');
                 }
 
-                var anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers);
+                var anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
 
                 if (anyElem) {
                     microdata.markProperty(anyElem, propName);
@@ -8310,7 +8298,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var SEPAR = '__';
 
         module.exports = {
-            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, buildEntityElem) {
+            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem) {
                 if (!elemSection) {
                     throw new Error('required_elemSection');
                 }
@@ -8346,7 +8334,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     var entityPathLevels = pathLevels.concat(entity.id);
 
-                    var elemEntity = buildEntityElem(elemSection, entityPathLevels, entitySchema, entity, typeCheckers);
+                    var elemEntity = buildEntityElem(elemSection, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly);
 
                     var btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
 
@@ -8520,6 +8508,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          Обёртка для свойства. Содержит:
          - элемент с названием свойства
          - элемент с контентом свойства
+        Дополнительно (на стороне разметки-представления)
          - элемент, скрывающий/отображающий элемент с контентом свойства
         */
 
@@ -8529,13 +8518,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var row = document.createElement('fieldset');
             row.id = rowId;
             row.className = 'prop-row';
-
-            var elemSwitch = document.createElement('input');
-            elemSwitch.type = 'radio';
-            elemSwitch.name = 'tabview';
-            elemSwitch.setAttribute('value', rowId);
-            row.appendChild(elemSwitch);
-
             return row;
         };
     }, {}], 41: [function (require, module, exports) {
@@ -8587,6 +8569,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // добавление обработчиков в элементы для изменения данных хранилища
         pubsub(rootContent.parentNode, store);
 
+        var policy = store.getEntity();
+
         /**
          * Вкладки (табы) не относятся к семантике. Это часть декоративного представления. Модель "Полис" не содержит сведений о группировке её свойств.
          * Переключение вкладок осуществляется пользователем вручную либо автоматически при загрузке:
@@ -8596,11 +8580,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          */
         var tabs = ['insuredPlaces', 'insuredEvent', 'insurants', 'insurer', 'offers'];
 
+        tabs.forEach(function (tabName) {
+            var rowId = 'root__' + tabName;
+            var row = document.getElementById(rowId);
+            if (!row) {
+                throw new Error('no_row: ' + tabName);
+            }
+            var elemSwitch = document.createElement('input');
+            elemSwitch.type = 'radio';
+            elemSwitch.name = 'tabview';
+            elemSwitch.setAttribute('value', rowId);
+            row.insertBefore(elemSwitch, row.firstChild);
+        });
+
         var goToTab = function (tabName) {
             rootContent.querySelector('input[name=tabview][value=root__' + tabName + ']').checked = true;
         };
 
-        var policy = store.getEntity();
         var needTab = void 0;
         if (policy.isCalculable === true) {
             needTab = 'offers';
@@ -8902,7 +8898,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             store.subscribe(function (changedKeys, stateFresh) {
                 // console.log('changedKeys TODO', changedKeys);
 
-                entityBuilder(rootContainer, [], 'FinancialProduct', stateFresh, typeCheckers);
+                entityBuilder(rootContainer, [], 'FinancialProduct', stateFresh, typeCheckers,
+                // isGlobalDisplayOnly
+                false);
             });
         };
 

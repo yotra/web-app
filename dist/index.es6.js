@@ -5341,13 +5341,6 @@ module.exports = {
 // }
 
 },{"../config":1,"./helpers/ajax-loader":7,"./insurant":10,"./insured-event":11,"./insured-place":12,"./person":13,"./policy-offer":14,"extend":3}],16:[function(require,module,exports){
-/**
- * Every type has two representation: display and input
- * - mobile-native
- * - web
- * - desktop
- */
-
 'use strict';
 
 const allowedCountries = require('./data/countries');
@@ -8041,7 +8034,8 @@ const buildEntityElem = function(elemRow,
                                  entityPathLevels,
                                  entitySchema,
                                  entity,
-                                 typeCheckers) {
+                                 typeCheckers,
+                                 isGlobalDisplayOnly) {
   if (!typeCheckers) {
     throw new Error('required_typeCheckers');
   }
@@ -8080,7 +8074,7 @@ const buildEntityElem = function(elemRow,
 
   // console.log('elemEntityContent', elemEntityContent);
   // update or create
-  buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers); // eslint-disable-line
+  buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers, isGlobalDisplayOnly); // eslint-disable-line
 
   return elemEntity;
 };
@@ -8098,7 +8092,8 @@ const buildEntityListElem = function(elemRow,
                                      entitySchema,
                                      entitySettings,
                                      entityList,
-                                     typeCheckers) {
+                                     typeCheckers,
+                                     isGlobalDisplayOnly) {
   if (pathLevels.length < 1) {
     throw new Error('required_path_levels_non_empty');
   }
@@ -8168,6 +8163,7 @@ const buildEntityListElem = function(elemRow,
                                 entitySchema,
                                 pathLevels,
                                 typeCheckers,
+                                isGlobalDisplayOnly,
                                 buildEntityElem);
 
   return elemSection;
@@ -8204,16 +8200,12 @@ const buildSimpleElem = function(elemRow,
       elemProp = propFactory.createDisplay(propType, typeChecker);
     } else {
       elemProp = propFactory.createInput(propType, typeChecker);
+      elemProp.name = buildInputName(parentPathLevels, propName);
+      elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
     }
 
-    elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
     elemProp.id = propContentId;
-    // TODO: only for inputs
-    // insurer[payment][status] = 99
-    elemProp.name = buildInputName(parentPathLevels, propName);
     elemRow.appendChild(elemProp);
-    // } else {
-    //   throw new Error('not_realized_update_input');
   }
 
   if (isDisplayOnly) {
@@ -8225,7 +8217,7 @@ const buildSimpleElem = function(elemRow,
   return elemProp;
 };
 
-const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers) {
+const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly) {
   if (!propName || !propSetting) {
     throw new Error('required_propName_propSetting');
   }
@@ -8233,9 +8225,6 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
   if (!elemRow) {
     throw new Error('required_elem_row');
   }
-
-  // isCalculatable or async (TODO)
-  const isDisplayOnly = !!propSetting.calculate || parentPathLevels.indexOf('data') >= 0 || propName === 'loading' || propName === 'error';
 
   const propType = propSetting.type;
 
@@ -8270,7 +8259,8 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                              pathLevels,
                              childEntitySchema,
                              propValue,
-                             typeCheckers);
+                             typeCheckers,
+                             isPropDisplayOnly);
 
       // only root element without propName
       // itemprop must be outside of scope
@@ -8293,14 +8283,15 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                                  childEntitySchema,
                                  childEntitySettings,
                                  propValue || [],
-                                 typeCheckers); // TODO: null array
+                                 typeCheckers,
+                                 isPropDisplayOnly); // TODO: null array
     default:
       return buildSimpleElem(elemRow,
                              parentPathLevels,
                              propName,
                              propType,
                              propValue,
-                             isDisplayOnly,
+                             isPropDisplayOnly,
                              typeCheckers);
   }
 };
@@ -8315,7 +8306,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
  * @param {Object} entity Like { firtsName: 'Jane' }
  * @returns {Object[]} List of DOM elements
  */
-const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity, typeCheckers) {
+const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity, typeCheckers, isGlobalDisplayOnly) {
   if (!entity || !elemEntity) {
     // entityElement can not exist without an entity
     throw new Error('entity_and_elemEntity_must_exist');
@@ -8337,6 +8328,12 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
       throw new Error('required_label: ' + propName);
     }
 
+    const isPropDisplayOnly = isGlobalDisplayOnly ||
+      !!propSetting.calculate ||
+      parentPathLevels.indexOf('data') >= 0 ||
+      propName === 'loading' ||
+      propName === 'error';
+
     // TODO: root__
     const allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
 
@@ -8357,7 +8354,7 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
       } else {
         elemLabel = document.createElement('label');
         // if writable property, like <input>
-        if (!propSetting.calculate) {
+        if (!isPropDisplayOnly) {
           elemLabel.htmlFor = propGlobalId + '_content';
         }
       }
@@ -8371,7 +8368,7 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
       //   throw new Error('not_realized_update_prop');
     }
 
-    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers);
+    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
 
     if (anyElem) {
       microdata.markProperty(anyElem, propName);
@@ -8429,7 +8426,7 @@ module.exports = buildEntityElem;
 const SEPAR = '__';
 
 module.exports = {
-  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, buildEntityElem) {
+  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem) {
     if (!elemSection) {
       throw new Error('required_elemSection');
     }
@@ -8469,7 +8466,8 @@ module.exports = {
                                          entityPathLevels,
                                          entitySchema,
                                          entity,
-                                         typeCheckers);
+                                         typeCheckers,
+                                         isGlobalDisplayOnly);
 
       const btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
 
@@ -8647,6 +8645,7 @@ module.exports = {
  Обёртка для свойства. Содержит:
  - элемент с названием свойства
  - элемент с контентом свойства
+Дополнительно (на стороне разметки-представления)
  - элемент, скрывающий/отображающий элемент с контентом свойства
 */
 
@@ -8656,13 +8655,6 @@ module.exports = function(rowId) {
   const row = document.createElement('fieldset');
   row.id = rowId;
   row.className = 'prop-row';
-
-  const elemSwitch = document.createElement('input');
-  elemSwitch.type = 'radio';
-  elemSwitch.name = 'tabview';
-  elemSwitch.setAttribute('value', rowId);
-  row.appendChild(elemSwitch);
-
   return row;
 };
 
@@ -8716,6 +8708,8 @@ inputPolyfill.init(rootContent);
 // добавление обработчиков в элементы для изменения данных хранилища
 pubsub(rootContent.parentNode, store);
 
+const policy = store.getEntity();
+
 /**
  * Вкладки (табы) не относятся к семантике. Это часть декоративного представления. Модель "Полис" не содержит сведений о группировке её свойств.
  * Переключение вкладок осуществляется пользователем вручную либо автоматически при загрузке:
@@ -8731,11 +8725,23 @@ const tabs = [
   'offers'
 ];
 
+tabs.forEach(function(tabName) {
+  const rowId = 'root__' + tabName;
+  const row = document.getElementById(rowId);
+  if (!row) {
+    throw new Error('no_row: ' + tabName);
+  }
+  const elemSwitch = document.createElement('input');
+  elemSwitch.type = 'radio';
+  elemSwitch.name = 'tabview';
+  elemSwitch.setAttribute('value', rowId);
+  row.insertBefore(elemSwitch, row.firstChild);
+});
+
 const goToTab = function(tabName) {
   rootContent.querySelector('input[name=tabview][value=root__' + tabName + ']').checked = true;
 };
 
-const policy = store.getEntity();
 let needTab;
 if (policy.isCalculable === true) {
   needTab = 'offers';
@@ -9042,7 +9048,9 @@ module.exports = function(rootContainer, store) {
                   [],
                   'FinancialProduct',
                   stateFresh,
-                  typeCheckers);
+                  typeCheckers,
+                  // isGlobalDisplayOnly
+                  false);
   });
 };
 
