@@ -25,6 +25,7 @@ const TextDisplay = require('./text-display');
 const NumberDisplay = require('./number-display');
 const DateDisplay = require('./date-display');
 const UrlDisplay = require('./url-display');
+const ImageDisplay = require('./image-display');
 
 const BooleanInput = require('./boolean-input');
 const TextInput = require('./text-input');
@@ -70,6 +71,8 @@ const calculateDisplay = function(tag) {
       return TextDisplay;
     case 'url-display':
       return UrlDisplay;
+    case 'image-display':
+      return ImageDisplay;
     case 'number-display':
     case 'integer-display':
     case 'float-display':
@@ -77,8 +80,8 @@ const calculateDisplay = function(tag) {
       return NumberDisplay;
     case 'date-display':
       return DateDisplay;
-    // case 'duration-display':
-    //   return DurationDisplay;
+      // case 'duration-display':
+      //   return DurationDisplay;
 
     default:
       throw new Error('tag_is_not_supported: ' + tag);

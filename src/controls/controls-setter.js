@@ -63,6 +63,25 @@ const setInputValue = function(elemInput, value) {
   elem.title = String(value);
 };
 
+const parseImageMeta = function(imageMeta) {
+  const parts = imageMeta.split('|');
+
+  if (!parts[0]) {
+    throw new Error('required_imageMeta_src');
+  }
+
+  const result = {
+    src: parts[0]
+  };
+
+  for (let i = 1; i < parts.length; i += 1) {
+    const keyValue = parts[i].split('=');
+    result[keyValue[0]] = keyValue[1];
+  }
+
+  return result;
+};
+
 const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
 
@@ -73,6 +92,17 @@ const setDisplayValue = function(elemDisplay, value) {
   if (elem.tagName === 'A') {
     elem.href = value || '';
     elem.textContent = value || '';
+  } else if (elem.tagName === 'IMG') {
+    if (value === null) {
+      throw new Error('image can not be null at this moment');
+    }
+    const imageMeta = parseImageMeta(value);
+    // parse Image string
+
+    elem.src = imageMeta.src;
+    if (imageMeta.width) { elem.width = imageMeta.width; }
+    if (imageMeta.height) { elem.height = imageMeta.height; }
+    if (imageMeta.alt) { elem.alt = imageMeta.alt; }
   } else if (elem.hasAttribute('data-state')) {
     elem.textContent = String(value);
     elem.setAttribute('data-state', String(value));
@@ -80,10 +110,9 @@ const setDisplayValue = function(elemDisplay, value) {
     elem.parentNode.setAttribute('data-state', String(value));
   } else {
     elem.textContent = value === null ? '' : (value + '');
+    // TODO debugging
+    elem.title = String(value);
   }
-
-  // debugging
-  elem.title = String(value);
 };
 
 module.exports = {

@@ -5288,6 +5288,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return typeof value === 'string' && value.length <= 2000;
                 }
             },
+            // http://some-img.jpeg|alt=Welcome|width=200|height=100
+            Image: {
+                isValid: function (value) {
+                    var parts = value.split('|');
+                    var srcUrl = parts[0];
+                    // TODO: check other parts
+                    return typeof value === 'string' && srcUrl && srcUrl.length > 0;
+                }
+            },
             Number: {
                 isValid: function (value) {
                     return isNumber(value);
@@ -6445,6 +6454,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return settings;
         };
 
+        var attachProps = function (initialSetting, propConfig) {
+            var setting = initialSetting;
+            setting.type = propConfig.type;
+            // <label>My input</label> for according input or span
+
+            if (propConfig.label) {
+                setting.label = propConfig.label;
+            }
+
+            if (propConfig.schema) {
+                // http://schema.org
+                setting.schema = propConfig.schema;
+            }
+
+            if (propConfig.sameAsProperty) {
+                setting.sameAsProperty = propConfig.sameAsProperty;
+            }
+        };
+
         /**
          * Convert from JSON configuration to Setting model
          * all async properties are computed
@@ -6456,8 +6484,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _classCallCheck(this, Setting);
 
             if (!propConfig.type) {
-                throw new Error('required_type: ' + propName + ': ' + propConfig.type);
+                throw new Error('required_type: ' + propName);
             }
+
+            if (typeof propConfig.type !== 'string') {
+                throw new Error('required_prop_type_string: ' + propName);
+            }
+
+            // propConfig.label is optional
 
             var computed = propConfig.computed;
             var computedAsync = propConfig.computedAsync;
@@ -6466,18 +6500,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 throw new Error('use_computed_or_computedAsync: ' + propName);
             }
 
-            if (!propConfig.type || typeof propConfig.type !== 'string') {
-                throw new Error('required_prop_type_string: ' + propName);
-            }
-
             if (computedAsync) {
-                var defaultAsyncConfig = {
-                    data: {
-                        type: propConfig.type,
-                        label: propConfig.label,
-                        schema: propConfig.schema,
-                        ref: propConfig.ref
-                    },
+                var innerType = {};
+                attachProps(innerType, propConfig);
+
+                if (propConfig.ref) {
+                    innerType.ref = propConfig.ref;
+                }
+
+                this.type = 'Item';
+                this.label = 'AsyncItem';
+                this.refSettings = buildSettings({
+                    data: innerType,
                     error: {
                         type: 'Text',
                         label: 'Error'
@@ -6488,26 +6522,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         type: 'Boolean',
                         label: 'Loading'
                     }
-                };
-
-                this.type = 'Item';
-                this.label = 'AsyncItem';
-                this.refSettings = buildSettings(defaultAsyncConfig);
+                });
                 this.schema = 'AsyncItem';
             } else {
-                this.type = propConfig.type;
-                // <label>My input</label> for according input or span
-                this.label = propConfig.label;
+                attachProps(this, propConfig);
 
                 if (propConfig.ref) {
                     // TODO: combine ref + schema
                     // this.ref = propConfig.ref;
                     this.refSettings = buildSettings(propConfig.ref);
-                }
-
-                if (propConfig.schema) {
-                    // http://schema.org
-                    this.schema = propConfig.schema;
                 }
             }
 
@@ -7742,6 +7765,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             elem.title = String(value);
         };
 
+        var parseImageMeta = function (imageMeta) {
+            var parts = imageMeta.split('|');
+
+            if (!parts[0]) {
+                throw new Error('required_imageMeta_src');
+            }
+
+            var result = {
+                src: parts[0]
+            };
+
+            for (var i = 1; i < parts.length; i += 1) {
+                var keyValue = parts[i].split('=');
+                result[keyValue[0]] = keyValue[1];
+            }
+
+            return result;
+        };
+
         var setDisplayValue = function (elemDisplay, value) {
             var elem = elemDisplay;
 
@@ -7752,6 +7794,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (elem.tagName === 'A') {
                 elem.href = value || '';
                 elem.textContent = value || '';
+            } else if (elem.tagName === 'IMG') {
+                if (value === null) {
+                    throw new Error('image can not be null at this moment');
+                }
+                var imageMeta = parseImageMeta(value);
+                // parse Image string
+
+                elem.src = imageMeta.src;
+                if (imageMeta.width) {
+                    elem.width = imageMeta.width;
+                }
+                if (imageMeta.height) {
+                    elem.height = imageMeta.height;
+                }
+                if (imageMeta.alt) {
+                    elem.alt = imageMeta.alt;
+                }
             } else if (elem.hasAttribute('data-state')) {
                 elem.textContent = String(value);
                 elem.setAttribute('data-state', String(value));
@@ -7759,10 +7818,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 elem.parentNode.setAttribute('data-state', String(value));
             } else {
                 elem.textContent = value === null ? '' : value + '';
+                // TODO debugging
+                elem.title = String(value);
             }
-
-            // debugging
-            elem.title = String(value);
         };
 
         module.exports = {
@@ -8290,7 +8348,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         //   // TODO: add search field for quick adding
         // };
 
-    }, { "./controls-setter": 28, "./entity-list-wrapper": 35, "./helpers/microdata": 36, "./prop-factory": 39, "./prop-row": 40 }], 35: [function (require, module, exports) {
+    }, { "./controls-setter": 28, "./entity-list-wrapper": 35, "./helpers/microdata": 36, "./prop-factory": 40, "./prop-row": 41 }], 35: [function (require, module, exports) {
         'use strict';
 
         // const microdata = require('./helpers/microdata');
@@ -8367,6 +8425,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         module.exports = helper;
     }, {}], 37: [function (require, module, exports) {
+        /**
+         * Image
+         * ImageObject: { id: url, width: 100, height: 200, alt: 'asdf' }
+         */
+
+        'use strict';
+
+        module.exports = function () {
+            return document.createElement('img');
+        };
+    }, {}], 38: [function (require, module, exports) {
         /** String label */
 
         'use strict';
@@ -8375,7 +8444,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var elem = doc.createElement('span');
             return elem;
         };
-    }, {}], 38: [function (require, module, exports) {
+    }, {}], 39: [function (require, module, exports) {
         /** Pick any number between min and max */
 
         'use strict';
@@ -8386,7 +8455,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             elem.placeholder = 'Число';
             return elem;
         };
-    }, {}], 39: [function (require, module, exports) {
+    }, {}], 40: [function (require, module, exports) {
         /**
          * A component factory, like document.createElement
          *
@@ -8415,6 +8484,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var NumberDisplay = require('./number-display');
         var DateDisplay = require('./date-display');
         var UrlDisplay = require('./url-display');
+        var ImageDisplay = require('./image-display');
 
         var BooleanInput = require('./boolean-input');
         var TextInput = require('./text-input');
@@ -8460,6 +8530,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return TextDisplay;
                 case 'url-display':
                     return UrlDisplay;
+                case 'image-display':
+                    return ImageDisplay;
                 case 'number-display':
                 case 'integer-display':
                 case 'float-display':
@@ -8503,7 +8575,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return elem;
             }
         };
-    }, { "./age-input": 25, "./boolean-display": 26, "./boolean-input": 27, "./country-input": 29, "./date-display": 30, "./date-input": 31, "./decade-input": 32, "./duration-input": 33, "./number-display": 37, "./number-input": 38, "./text-display": 41, "./text-input": 42, "./url-display": 43 }], 40: [function (require, module, exports) {
+    }, { "./age-input": 25, "./boolean-display": 26, "./boolean-input": 27, "./country-input": 29, "./date-display": 30, "./date-input": 31, "./decade-input": 32, "./duration-input": 33, "./image-display": 37, "./number-display": 38, "./number-input": 39, "./text-display": 42, "./text-input": 43, "./url-display": 44 }], 41: [function (require, module, exports) {
         /**
          Обёртка для свойства. Содержит:
          - элемент с названием свойства
@@ -8520,9 +8592,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             row.className = 'prop-row';
             return row;
         };
-    }, {}], 41: [function (require, module, exports) {
-        arguments[4][37][0].apply(exports, arguments);
-    }, { "dup": 37 }], 42: [function (require, module, exports) {
+    }, {}], 42: [function (require, module, exports) {
+        arguments[4][38][0].apply(exports, arguments);
+    }, { "dup": 38 }], 43: [function (require, module, exports) {
         /** String input */
 
         'use strict';
@@ -8533,7 +8605,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             elem.placeholder = 'text';
             return elem;
         };
-    }, {}], 43: [function (require, module, exports) {
+    }, {}], 44: [function (require, module, exports) {
         /** String label */
 
         'use strict';
@@ -8541,7 +8613,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         module.exports = function () {
             return document.createElement('a');
         };
-    }, {}], 44: [function (require, module, exports) {
+    }, {}], 45: [function (require, module, exports) {
         'use strict';
 
         // Side modules
@@ -8630,7 +8702,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // buttonTabNext.textContent = 'Далее';
         // buttonTabNext.className = 'tab-next';
         // rootContent.appendChild(buttonTabNext);
-    }, { "../../vm-schema": 2, "./initial-state": 45, "./input-polyfill": 46, "./pubsub": 47, "computed-state": 17 }], 45: [function (require, module, exports) {
+    }, { "../../vm-schema": 2, "./initial-state": 46, "./input-polyfill": 47, "./pubsub": 48, "computed-state": 17 }], 46: [function (require, module, exports) {
         module.exports = {
             id: 0,
             name: 'Полис ВЗР',
@@ -8665,7 +8737,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             //     visitDate: '2010-01-01'
             //   }]
         };
-    }, {}], 46: [function (require, module, exports) {
+    }, {}], 47: [function (require, module, exports) {
         /**
          * полифилл заменяет стандартный датапикер для соответствующих инпутов. При первой фокусировке - создаётся датапикер.
          * @todo firefox
@@ -8729,7 +8801,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         module.exports = {
             init: init
         };
-    }, { "pikaday": 24 }], 47: [function (require, module, exports) {
+    }, { "pikaday": 24 }], 48: [function (require, module, exports) {
         'use strict';
 
         var entityBuilder = require('./controls/entity-builder');
@@ -8993,4 +9065,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         //   console.log('actionType', actionType);
         // });
-    }, { "../../vm-schema": 2, "./controls/entity-builder": 34 }] }, {}, [44]);
+    }, { "../../vm-schema": 2, "./controls/entity-builder": 34 }] }, {}, [45]);
