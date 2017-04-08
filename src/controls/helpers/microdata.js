@@ -7,8 +7,12 @@ helper.markEntity = function(entityElem, schemaName) {
   entityElem.setAttribute('itemtype', 'http://schema.org/' + schemaName);
 };
 
-helper.markProperty = function(propertyElem, propertyName) {
-  propertyElem.setAttribute('itemprop', propertyName);
+helper.markProperty = function(propertyElem, propertyName, sameAsPropertyName) {
+  // like 'url contentUrl' for images
+  const val = propertyName +
+        (sameAsPropertyName ? (' ' + sameAsPropertyName) : '');
+
+  propertyElem.setAttribute('itemprop', val);
 };
 
 module.exports = helper;

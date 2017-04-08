@@ -8278,15 +8278,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     elemRow = propRow(propGlobalId);
                     elemRow.setAttribute('data-prop-row', propName);
 
-                    var elemLabel = void 0;
-                    if (propSetting.type === 'Item' || propSetting.type === 'ItemList') {
-                        elemLabel = document.createElement('h2');
-                    } else {
-                        elemLabel = document.createElement('label');
-                        // if writable property, like <input>
-                        if (!isPropDisplayOnly) {
-                            elemLabel.htmlFor = propGlobalId + '_content';
-                        }
+                    var elemLabel = document.createElement('label');
+                    elemLabel.id = propGlobalId + '_label';
+                    // if writable property, like <input>
+                    if (!isPropDisplayOnly) {
+                        elemLabel.htmlFor = propGlobalId + '_content';
                     }
 
                     elemLabel.textContent = propLabel;
@@ -8301,7 +8297,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
 
                 if (anyElem) {
-                    microdata.markProperty(anyElem, propName);
+                    microdata.markProperty(anyElem, propName, propSetting.sameAsProperty);
                 }
             });
         };
@@ -8419,8 +8415,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             entityElem.setAttribute('itemtype', 'http://schema.org/' + schemaName);
         };
 
-        helper.markProperty = function (propertyElem, propertyName) {
-            propertyElem.setAttribute('itemprop', propertyName);
+        helper.markProperty = function (propertyElem, propertyName, sameAsPropertyName) {
+            // like 'url contentUrl' for images
+            var val = propertyName + (sameAsPropertyName ? ' ' + sameAsPropertyName : '');
+
+            propertyElem.setAttribute('itemprop', val);
         };
 
         module.exports = helper;
