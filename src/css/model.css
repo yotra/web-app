@@ -47,7 +47,7 @@
     height: var(--tab-container-height);
     z-index: 20;
 
-    &:checked ~ h2 {
+    &:checked ~ label {
       background: color(var(--tab-background) blackness(30%)) !important;
       color: #eee !important;
     }
@@ -166,7 +166,7 @@ input[type="radio"] {
   &__insuredPlaces {
     display: block;
 
-    & > h2 {
+    & > label {
       @apply --tab-switch;
       @apply --tab-switch-header;
 
@@ -252,7 +252,7 @@ input[type="radio"] {
       display: block;
     }
 
-    & > h2 {
+    & > label {
       @apply --tab-switch;
       @apply --tab-switch-header;
 
@@ -343,7 +343,7 @@ input[type="radio"] {
   &__insurants {
     display: block;
 
-    & > h2 {
+    & > label {
       @apply --tab-switch;
       @apply --tab-switch-header;
 
@@ -420,7 +420,7 @@ input[type="radio"] {
   &__insurer {
     display: block;
 
-    & > h2 {
+    & > label {
       @apply --tab-switch;
       @apply --tab-switch-header;
 
@@ -445,7 +445,7 @@ input[type="radio"] {
   &__offers {
     display: block;
 
-    & > h2 { display: none; }
+    & > label { display: none; }
 
     &_content { display: none; }
 
@@ -456,7 +456,7 @@ input[type="radio"] {
     &__data {
       display: block;
 
-      > h2 { display: none; }
+      > label { display: none; }
 
       &_content {
         > [itemscope] {

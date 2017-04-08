@@ -8131,6 +8131,81 @@ const buildEntityElem = function(elemRow,
   return elemEntity;
 };
 
+const createElemInsertId = function(idPropType, typeChecker, pathLevels) {
+  const elemInsertId = propFactory.createInput(idPropType, typeChecker);
+  elemInsertId.setAttribute('data-entity-list-path',
+                            pathLevels.join('.'));
+  elemInsertId.setAttribute('data-action', 'insertItem');
+  return elemInsertId;
+};
+
+const findOrCreateElemSection = function(elemRow,
+                                         elemSectionId,
+                                         entitySettings,
+                                         typeCheckers,
+                                         pathLevels,
+                                         isGlobalDisplayOnly) {
+  const elemExisting = elemRow.querySelector('#' + elemSectionId);
+
+  if (elemExisting) { return elemExisting; }
+
+  // TODO: change to UL or something listable
+  const elemCreated = document.createElement('div');
+  elemCreated.id = elemSectionId;
+  microdata.markEntity(elemCreated, 'ItemList');
+  elemRow.appendChild(elemCreated);
+
+  // id can be calculated during insertion
+  // or on the client (countryId)
+  // пользователь указывает ид, имя, возраст
+  // данные ассоциативной сущности и самой ассоциации
+  // ассоциативная сущность должна существовать в отдельности
+  // от текущей сущности
+  // данные ассоциации указываются вручную
+
+  // const formInsertion = document.createElement('div');
+  // это не обновляемая сущность, а вставляемая (без событий и вычисляемых полей)
+  // вставляемая сущность также может содержать внутренние сущности:
+  // нужна атомарная операция вставки - только записываемые частные свойства: ид и т.п.
+  // некоторые сущности требуют обязательных полей (но это не точно)
+  // например isFixed не может быть null
+  // buildEntityElem(formInsertion,
+  // entityPathLevels,
+  // entitySchema,
+  // entity)
+  const idSetting = entitySettings.id;
+  if (!idSetting) {
+    throw new Error('required_id_for: ' + elemSectionId);
+  }
+
+  const idPropType = idSetting.type; // 'Country' | 'Integer'
+
+  const typeChecker = typeCheckers[idPropType];
+  if (!isGlobalDisplayOnly) {
+    const elemInsertId = createElemInsertId(idPropType, typeChecker, pathLevels);
+    // TODO: or in ItemList element, like [].push
+    elemRow.appendChild(elemInsertId);
+  }
+
+  // const elemInsert = document.createElement('button');
+  // elemInsert.type = 'button';
+  // elemInsert.setAttribute('data-action-type', 'insertItem');
+  // elemInsert.setAttribute('data-entity-list-path', pathLevels.join('.'));
+  // добавить страну, добавить туриста
+  // Кнопка добавляет пустую сущность (с авто ид), которая потом заполняется обновлениями
+  // Как ИД сгенерировать? Нулевой нельзя добавить
+  // По кол-ву предыдущих записей
+  // elemInsert.textContent = 'Add';
+
+  /**
+     По нажатию на кнопку отображается форма (всплывающее окно)
+     - выбор страны
+     - выбор сохранённого туриста (добавление нового)
+  */
+  // elemRow.appendChild(elemInsert);
+  return elemCreated;
+};
+
 /**
  * It doesnt depends of property name of a parent entity
  * @param {String[]} pathLevels Like ['university', 'students']
@@ -8154,61 +8229,12 @@ const buildEntityListElem = function(elemRow,
 
   const elemSectionId = allPathLevels.join(SEPAR) + '_content';
 
-  let elemSection = elemRow.querySelector('#' + elemSectionId);
-
-  if (!elemSection) {
-    // TODO: change to UL or something listable
-    elemSection = document.createElement('div');
-    elemSection.id = elemSectionId;
-    microdata.markEntity(elemSection, 'ItemList');
-    elemRow.appendChild(elemSection);
-
-    // id can be calculated during insertion
-    // or on the client (countryId)
-    // пользователь указывает ид, имя, возраст
-    // данные ассоциативной сущности и самой ассоциации
-    // ассоциативная сущность должна существовать в отдельности
-    // от текущей сущности
-    // данные ассоциации указываются вручную
-
-    // const formInsertion = document.createElement('div');
-    // это не обновляемая сущность, а вставляемая (без событий и вычисляемых полей)
-    // вставляемая сущность также может содержать внутренние сущности:
-    // нужна атомарная операция вставки - только записываемые частные свойства: ид и т.п.
-    // некоторые сущности требуют обязательных полей (но это не точно)
-    // например isFixed не может быть null
-    // buildEntityElem(formInsertion,
-    // entityPathLevels,
-    // entitySchema,
-    // entity)
-
-    const idSetting = entitySettings.id;
-    const idPropType = idSetting.type; // 'Country' | 'Integer'
-
-    const typeChecker = typeCheckers[idPropType];
-    const elemInsertId = propFactory.createInput(idPropType, typeChecker);
-    elemInsertId.setAttribute('data-entity-list-path', pathLevels.join('.'));
-    elemInsertId.setAttribute('data-action', 'insertItem');
-
-    elemRow.appendChild(elemInsertId);
-
-    // const elemInsert = document.createElement('button');
-    // elemInsert.type = 'button';
-    // elemInsert.setAttribute('data-action-type', 'insertItem');
-    // elemInsert.setAttribute('data-entity-list-path', pathLevels.join('.'));
-    // добавить страну, добавить туриста
-    // Кнопка добавляет пустую сущность (с авто ид), которая потом заполняется обновлениями
-    // Как ИД сгенерировать? Нулевой нельзя добавить
-    // По кол-ву предыдущих записей
-    // elemInsert.textContent = 'Add';
-
-    /**
-     По нажатию на кнопку отображается форма (всплывающее окно)
-     - выбор страны
-     - выбор сохранённого туриста (добавление нового)
-     */
-    // elemRow.appendChild(elemInsert);
-  }
+  const elemSection = findOrCreateElemSection(elemRow,
+                                              elemSectionId,
+                                              entitySettings,
+                                              typeCheckers,
+                                              pathLevels,
+                                              isGlobalDisplayOnly);
 
   entityListWrapper.updateItems(elemSection,
                                 entityList,

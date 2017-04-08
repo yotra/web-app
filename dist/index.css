@@ -1095,7 +1095,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__insuredPlaces > h2 {
+#root__insuredPlaces > label {
   display: block;
   position: fixed;
   bottom: 0;
@@ -1114,7 +1114,7 @@ input[type="radio"] {
   left: 0%;
 }
 
-#root__insuredPlaces > h2:checked ~ h2 {
+#root__insuredPlaces > label:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1134,7 +1134,7 @@ input[type="radio"] {
   left: 0%;
 }
 
-#root__insuredPlaces > [name=tabview]:checked ~ h2 {
+#root__insuredPlaces > [name=tabview]:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1207,7 +1207,7 @@ input[type="radio"] {
   left: 25%;
 }
 
-#root__insuredEvent > [name=tabview]:checked ~ h2 {
+#root__insuredEvent > [name=tabview]:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1216,7 +1216,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__insuredEvent > h2 {
+#root__insuredEvent > label {
   display: block;
   position: fixed;
   bottom: 0;
@@ -1235,7 +1235,7 @@ input[type="radio"] {
   left: 25%;
 }
 
-#root__insuredEvent > h2:checked ~ h2 {
+#root__insuredEvent > label:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1332,7 +1332,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__insurants > h2 {
+#root__insurants > label {
   display: block;
   position: fixed;
   bottom: 0;
@@ -1351,7 +1351,7 @@ input[type="radio"] {
   left: 50%;
 }
 
-#root__insurants > h2:checked ~ h2 {
+#root__insurants > label:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1371,7 +1371,7 @@ input[type="radio"] {
   left: 50%;
 }
 
-#root__insurants > [name=tabview]:checked ~ h2 {
+#root__insurants > [name=tabview]:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1436,7 +1436,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__insurer > h2 {
+#root__insurer > label {
   display: block;
   position: fixed;
   bottom: 0;
@@ -1455,7 +1455,7 @@ input[type="radio"] {
   left: 75%;
 }
 
-#root__insurer > h2:checked ~ h2 {
+#root__insurer > label:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1474,7 +1474,7 @@ input[type="radio"] {
   left: 75%;
 }
 
-#root__insurer > [name=tabview]:checked ~ h2 {
+#root__insurer > [name=tabview]:checked ~ label {
   background: rgb(43, 156, 179) !important;
   color: #eee !important;
 }
@@ -1487,7 +1487,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__offers > h2 {
+#root__offers > label {
   display: none;
 }
 
@@ -1503,7 +1503,7 @@ input[type="radio"] {
   display: block;
 }
 
-#root__offers__data > h2 {
+#root__offers__data > label {
   display: none;
 }
 
