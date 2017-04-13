@@ -14,6 +14,8 @@ const entityListWrapper = require('./entity-list-wrapper');
 
 const SEPAR = '__';
 
+const PRIMARY_KEY = 'id';
+
 const buildInputName = function(parentPathLevels, propName) {
   const levels = parentPathLevels.concat(propName);
 
@@ -143,7 +145,7 @@ const findOrCreateElemSection = function(elemRow,
   // entityPathLevels,
   // entitySchema,
   // entity)
-  const idSetting = entitySettings.id;
+  const idSetting = entitySettings[PRIMARY_KEY];
   if (!idSetting) {
     throw new Error('required_id_for: ' + elemSectionId);
   }
@@ -446,11 +448,6 @@ module.exports = buildEntityElem;
 //     id: 53,
 //     created: '2010-02-10'
 //   }];
-
-//   const options = foreignList.map(function(item) {
-//     // TODO: to spans from string
-//     return [item.id + '', item.id + ': ' + item.created];
-//   });
 
 //   options.unshift([null, 'select...']);
 
