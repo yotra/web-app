@@ -214,7 +214,8 @@ const buildEntityListElem = function(elemRow,
                                 pathLevels,
                                 typeCheckers,
                                 isGlobalDisplayOnly,
-                                buildEntityElem);
+                                buildEntityElem,
+                                PRIMARY_KEY);
 
   return elemSection;
   // Update inner list

@@ -4,7 +4,7 @@
 const SEPAR = '__';
 
 module.exports = {
-  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem) {
+  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
     if (!elemSection) {
       throw new Error('required_elemSection');
     }
@@ -17,7 +17,7 @@ module.exports = {
     const allPathLevels = ['root'].concat(pathLevels);
 
     const ids = entityList.map(function(entity) {
-      return allPathLevels.concat(entity.id).join(SEPAR) + '_content';
+      return allPathLevels.concat(entity[PRIMARY_KEY]).join(SEPAR) + '_content';
     });
 
     const currentElems = elemSection.children;
@@ -38,7 +38,7 @@ module.exports = {
         throw new Error('required_entity');
       }
 
-      const entityPathLevels = pathLevels.concat(entity.id);
+      const entityPathLevels = pathLevels.concat(entity[PRIMARY_KEY]);
 
       const elemEntity = buildEntityElem(elemSection,
                                          entityPathLevels,
@@ -55,7 +55,10 @@ module.exports = {
         buttonRemoveItem.textContent = 'X';
         buttonRemoveItem.type = 'button';
         buttonRemoveItem.setAttribute('data-action', 'removeItem');
-        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify({ id: entity.id }));
+        const oidObject = {};
+        oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+
+        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
         buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
         elemEntity.appendChild(buttonRemoveItem);
       }
