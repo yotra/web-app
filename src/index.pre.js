@@ -7,7 +7,7 @@ const inputPolyfill = require('./input-polyfill');
 const pubsub = require('./pubsub');
 const initialState = require('./initial-state');
 
-const store = new ComputedState(modelTemplate);
+const store = new ComputedState(modelTemplate, 'identifier');
 
 store.update(initialState);
 

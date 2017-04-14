@@ -14,7 +14,7 @@ const entityListWrapper = require('./entity-list-wrapper');
 
 const SEPAR = '__';
 
-const PRIMARY_KEY = 'id';
+const PRIMARY_KEY = 'identifier';
 
 const buildInputName = function(parentPathLevels, propName) {
   const levels = parentPathLevels.concat(propName);

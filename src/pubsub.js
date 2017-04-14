@@ -3,6 +3,8 @@
 const entityBuilder = require('./controls/entity-builder');
 const typeCheckers = require('../../vm-schema').types;
 
+const PRIMARY_KEY = 'identifier';
+
 const getTypedValue = function(elem) {
   switch (elem.type) {
     case 'checkbox':
@@ -26,11 +28,9 @@ const getTypedValue = function(elem) {
 };
 
 module.exports = function(rootContainer, store) {
-  const insertItem = function(entityListPath, propValue) {
+  const insertItem = function(entityListPath, itemInsert) {
     try {
-      store.insertItem(entityListPath, {
-        id: propValue
-      });
+      store.insertItem(entityListPath, itemInsert);
     } catch (exc) {
       // console.log('exc', exc);
       alert(exc.message);
@@ -104,7 +104,9 @@ module.exports = function(rootContainer, store) {
       }
 
       if (dataAction === 'insertItem') {
-        insertItem(entityListPath, propValue);
+        const itemInsert = {};
+        itemInsert[PRIMARY_KEY] = propValue;
+        insertItem(entityListPath, itemInsert);
       } else if (dataAction === 'removeItem') {
         const oid = elem.getAttribute('data-entity-oid');
         let idToRemove;
@@ -150,7 +152,7 @@ module.exports = function(rootContainer, store) {
     const oid = elem.getAttribute('data-entity-oid');
     let idToRemove;
     try {
-      idToRemove = JSON.parse(oid).id;
+      idToRemove = JSON.parse(oid)[PRIMARY_KEY];
     } catch (exc) {
       console.warn('parse_error: ', elem.id);
       throw exc;

@@ -4,14 +4,14 @@ const membership = {
   // '@context': 'http://schema.org/',
   // '@type': 'Thing',
 
-  id: { type: 'Integer', label: 'ID' },
+  identifier: { type: 'Integer', label: 'ID' },
   created: { type: 'Date', label: 'Creation date' },
   cid: {
     type: 'Text',
     label: 'Text ID',
-    computed: ['id', function (id) {
-      if (id === null) { return null; }
-      return 'c' + id;
+    computed: ['identifier', function (identifier) {
+      if (identifier === null) { return null; }
+      return 'c' + identifier;
     }]
   }
 };
@@ -21,7 +21,7 @@ const person = {
   // '@context': 'http://schema.org/',
   // '@type': 'Person',
 
-  id: { type: 'Text', label: 'ID' },
+  identifier: { type: 'Text', label: 'ID' },
   birthDate: { type: 'Date', label: 'Birthday' },
 
   /**

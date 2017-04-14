@@ -4497,7 +4497,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // событие, например тур, путешествие, прокат, полёт и т.п.
         module.exports = {
-            id: { type: 'Integer', label: 'ID' },
+            identifier: { type: 'Integer', label: 'ID' },
 
             durationMax: {
                 type: 'Duration', // P1Y2M3D
@@ -4853,7 +4853,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var insurant = {};
         extend(insurant, person, {
             // override person.id (Integer)
-            id: {
+            identifier: {
                 type: 'Decade',
                 label: 'ИД застрахованного'
             },
@@ -4861,8 +4861,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             orderNumber: {
                 type: 'Text',
                 label: 'Застрахованное лицо №',
-                computed: ['id', function (id) {
-                    return id + ''; // or id + 1 (for 0-based ids)
+                computed: ['identifier', function (identifier) {
+                    return identifier + ''; // or id + 1 (for 0-based ids)
                 }]
             },
 
@@ -4892,7 +4892,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // место действия полиса: страна, группа стран
         module.exports = {
-            id: {
+            identifier: {
                 type: 'Country',
                 label: 'ИД'
             },
@@ -4900,9 +4900,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             name: {
                 type: 'Text',
                 label: 'Страна',
-                computed: ['id', function (id) {
+                computed: ['identifier', function (identifier) {
                     return typeCountry.allowed.filter(function (c) {
-                        return c.id === id;
+                        return c.id === identifier;
                     })[0].name;
                 }]
             },
@@ -4924,17 +4924,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             isDateVisaRequired: {
                 type: 'Boolean',
                 label: 'Требуется ли указание даты получения визы',
-                computed: ['id', function (id) {
-                    return id === 'estonia' || id === 'finland';
+                computed: ['identifier', function (identifier) {
+                    return identifier === 'estonia' || identifier === 'finland';
                 }]
             },
 
             isShengen: {
                 type: 'Boolean',
                 label: 'Входит ли страна в Шенген',
-                computed: ['id', function (id) {
+                computed: ['identifier', function (identifier) {
                     // TODO
-                    return id === 'italy' || id === 'spain';
+                    return identifier === 'italy' || identifier === 'spain';
                 }]
             }
         };
@@ -4942,7 +4942,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         'use strict';
 
         module.exports = {
-            id: {
+            identifier: {
                 type: 'Integer',
                 label: 'ИД'
             },
@@ -4982,7 +4982,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         'use strict';
 
         module.exports = {
-            id: {
+            identifier: {
                 type: 'Integer',
                 label: 'Идентификатор продукта'
             },
@@ -5010,11 +5010,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             infoUrl: {
                 type: 'URL',
                 label: 'Адрес продукта',
-                computed: ['id', function (id) {
-                    if (id === null) {
+                computed: ['identifier', function (identifier) {
+                    if (identifier === null) {
                         return null;
                     }
-                    return './product/' + id;
+                    return './product/' + identifier;
                 }]
             }
         };
@@ -5036,7 +5036,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // http://schema.org/FinancialService
         module.exports = {
-            id: { type: 'Integer', label: 'ID' },
+            identifier: { type: 'Integer', label: 'ID' },
 
             name: {
                 type: 'Text',
@@ -5100,8 +5100,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insuredPlacesWarning: {
                 type: 'Text',
                 label: 'Валидация стран',
-                computed: ['id', 'insuredPlaces', function (id, insuredPlaces) {
-                    if (id === null) {
+                computed: ['identifier', 'insuredPlaces', function (identifier, insuredPlaces) {
+                    if (identifier === null) {
                         return null;
                     }
 
@@ -5116,8 +5116,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insuredEventWarning: {
                 type: 'Text',
                 label: 'Валидация дат поездки',
-                computed: ['id', 'insuredEvent', function (id, insuredEvent) {
-                    if (id === null || insuredEvent === null) {
+                computed: ['identifier', 'insuredEvent', function (identifier, insuredEvent) {
+                    if (identifier === null || insuredEvent === null) {
                         return null;
                     }
 
@@ -5132,8 +5132,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insurantsWarning: {
                 type: 'Text',
                 label: 'Валидация застрахованных лиц',
-                computed: ['id', 'insurants', function (id, insurants) {
-                    if (id === null) {
+                computed: ['identifier', 'insurants', function (identifier, insurants) {
+                    if (identifier === null) {
                         return null;
                     }
 
@@ -5158,8 +5158,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             calculableWarning: {
                 type: 'Text',
                 label: 'необходимо заполнить',
-                computed: ['id', 'insuredPlacesWarning', 'insurantsWarning', function (id, insuredPlacesWarning, insurantsWarning) {
-                    if (id === null) {
+                computed: ['identifier', 'insuredPlacesWarning', 'insurantsWarning', function (identifier, insuredPlacesWarning, insurantsWarning) {
+                    if (identifier === null) {
                         return null;
                     }
                     if (insuredPlacesWarning) {
@@ -5178,8 +5178,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             isCalculable: {
                 type: 'Boolean',
                 label: 'Возможен ли расчёт?',
-                computed: ['id', 'insuredPlacesWarning', 'insuredEventWarning', 'insurantsWarning', function (id, w1, w2, w3) {
-                    if (id === null || w1 === null || w2 === null || w3 === null) {
+                computed: ['identifier', 'insuredPlacesWarning', 'insuredEventWarning', 'insurantsWarning', function (identifier, w1, w2, w3) {
+                    if (identifier === null || w1 === null || w2 === null || w3 === null) {
                         return null;
                     }
                     // no messages - then valid
@@ -5481,13 +5481,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return settings;
         };
 
+        /**
+         * @param {Object} rootEntityConfig A template for root entity
+         * @param {String?} initialPrimaryKey A name of primary property,
+         *         like 'id' or 'identifier'. One name for all entities.
+         *         By default: 'id'
+         * @returns An instance of ComputedState
+         */
+
         var ComputedState = function () {
-            function ComputedState(rootConfig) {
+            function ComputedState(rootEntityConfig, initialPrimaryKey) {
                 _classCallCheck(this, ComputedState);
 
-                var rootSettings = buildSettings(rootConfig);
+                var primaryKey = initialPrimaryKey || 'id';
 
-                this._rootEntity = new Computer(rootSettings);
+                var rootSettings = buildSettings(rootEntityConfig);
+
+                this._rootEntity = new Computer(rootSettings, primaryKey);
                 this._listeners = [];
                 this._asyncListeners = [];
 
@@ -5649,8 +5659,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
             }, {
                 key: "removeItem",
-                value: function removeItem(propertyPath, id) {
-                    this.operate(this._rootEntity.removeItem(propertyPath, id));
+                value: function removeItem(propertyPath, primaryKeyValue) {
+                    this.operate(this._rootEntity.removeItem(propertyPath, primaryKeyValue));
                 }
             }, {
                 key: "subscribe",
@@ -5701,22 +5711,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var Effect = require('./effect');
 
-        var PRIMARY_KEY = 'id';
-
-        var findIndexByPrimaryKey = function (list, primaryKey) {
+        var findIndexByKeyValue = function (list, propertyKey, propertyValue) {
             for (var i = 0, l = list.length; i < l; i += 1) {
-                if (list[i][PRIMARY_KEY] === primaryKey) {
+                if (list[i][propertyKey] === propertyValue) {
                     return i;
                 }
             }
             return -1;
         };
 
-        var findItemByPrimaryKey = function (list, primaryKeyString) {
+        var findItemByKeyValue = function (list, propertyKey, propertyValueString) {
             return list.filter(function (elem) {
                 // country['id'] === 'usa'
                 // 'members.5.name' -  typeof '5' === 'string'
-                return elem[PRIMARY_KEY] + '' === primaryKeyString;
+                return elem[propertyKey] + '' === propertyValueString;
             })[0];
         };
 
@@ -5737,13 +5745,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var Computer = function () {
             /**
              * @param {Object} settings Common settings for all instances
+             * @param {String?} primaryKey A name of primary property, like 'id'
              */
-            function Computer(settings) {
+            function Computer(settings, primaryKey) {
                 _classCallCheck(this, Computer);
 
                 if (!settings) {
-                    throw new Error('settings_required');
+                    throw new Error('required_settings');
                 }
+                if (!primaryKey) {
+                    throw new Error('required_primaryKey');
+                }
+
+                Object.defineProperty(this, '__primary', {
+                    value: primaryKey,
+                    writable: false,
+                    enumerable: false,
+                    configurable: false
+                });
 
                 Object.defineProperty(this, '__effects', {
                     value: [],
@@ -5821,7 +5840,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 value: function _createByType(entityConfig, value) {
                     // value = { name: 'bar', lname: 'foo', person: { age: 123 } }
                     // 1. create 2. update props (with effects)
-                    var needEntity = new this.constructor(entityConfig);
+                    var needEntity = new this.constructor(entityConfig, this.__primary);
                     needEntity.update(value);
                     return needEntity;
                 }
@@ -6032,7 +6051,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         var elemPrimaryKey = nextLevels[0];
                         // search by index of an array
                         // it can be replaced with search by id of item
-                        var mainItem = findItemByPrimaryKey(mainEntity, elemPrimaryKey);
+                        var mainItem = findItemByKeyValue(mainEntity, this.__primary, elemPrimaryKey);
 
                         if (!mainItem) {
                             // console.log('mainItem', elemPrimaryKey, JSON.stringify(mainObject));
@@ -6177,56 +6196,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                     return this._runBatchedEffects(changedPropNames);
                 }
-
-                /**
-                 * Insert to an array
-                 * - insertItem('tasks',  {id: 2, name: 'asdf'})
-                 * @param {String} propertyPath Like 'groups', 'students',
-                 *                 'groups.5.members', 'student.grades'
-                 * @param {Object} item Entity data: { id: 1, name: 'asdf' }
-                 * @returns {undefined}
-                 */
-
             }, {
-                key: "insertItem",
-                value: function insertItem(propertyPath, item) {
-                    // TODO: verify id unique through all table
-                    // TODO: insert, using sorting by id
-                    if (item[PRIMARY_KEY] === null || item[PRIMARY_KEY] === undefined) {
-                        throw new Error('required_primary_key_for_prop: ' + PRIMARY_KEY + ': ' + propertyPath);
-                    }
+                key: "_insertItemByPropertyName",
+                value: function _insertItemByPropertyName(propertyName, item) {
+                    var propertySetting = this.__settings[propertyName];
 
-                    // duplication of _updatePath
-                    var levels = pathToLevels(propertyPath);
-                    var mainLevel = levels[0];
-                    if (!mainLevel) {
-                        throw new Error('property_path_invalid: ' + propertyPath);
-                    }
-
-                    if (levels.length > 1) {
-                        return this._iterateLevels(mainLevel, levels.slice(1), item, 'insertItem');
-                        // return null;
-                    }
-
-                    var propertyName = propertyPath; // 1-level
-
-                    if (!this.__settings[propertyName]) {
+                    if (!propertySetting) {
                         throw new Error('no_such_property_to_insert: ' + propertyName);
                     }
 
-                    var propType = this.__settings[propertyName].type;
+                    var propertyType = propertySetting.type;
 
-                    if (propType !== 'ItemList') {
+                    if (propertyType !== 'ItemList') {
                         throw new Error('required_ItemList_type_to_insert:' + propertyName);
                     }
 
+                    // [{ id: 123, name: 'John' }, { id: 234, name: Jane }]
                     var currentList = this[propertyName];
 
                     if (Array.isArray(currentList) === false) {
                         throw new Error('required_array_to_insert:' + propertyName);
                     }
 
-                    var existingIndex = findIndexByPrimaryKey(currentList, item[PRIMARY_KEY]);
+                    var primaryPropertyKey = this.__primary;
+
+                    // TODO: verify id unique through all table
+                    // TODO: insert, using sorting by id
+                    if (item[primaryPropertyKey] === null || item[primaryPropertyKey] === undefined) {
+                        throw new Error('required_primary_key_for_prop: ' + primaryPropertyKey + ': ' + propertyName);
+                    }
+
+                    var existingIndex = findIndexByKeyValue(currentList, primaryPropertyKey, item[primaryPropertyKey]);
 
                     if (existingIndex >= 0) {
                         console.log('already_exist: ' + propertyName);
@@ -6242,6 +6242,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     var scopeOfPropNames = {};
                     scopeOfPropNames[propertyName] = this._runPropEffects(propertyName);
                     return scopeOfPropNames;
+                }
+
+                /**
+                 * Insert to an array
+                 * - insertItem('tasks',  {id: 2, name: 'asdf'})
+                 * @param {String} propertyPath Like 'groups', 'students',
+                 *                 'groups.5.members', 'student.grades'
+                 * @param {Object} item Entity data: { id: 1, name: 'asdf' }
+                 * @returns {undefined}
+                 */
+
+            }, {
+                key: "insertItem",
+                value: function insertItem(propertyPath, item) {
+                    // duplication of _updatePath
+                    var levels = pathToLevels(propertyPath);
+                    var mainLevel = levels[0];
+                    if (!mainLevel) {
+                        throw new Error('property_path_invalid: ' + propertyPath);
+                    }
+
+                    if (levels.length > 1) {
+                        return this._iterateLevels(mainLevel, levels.slice(1), item, 'insertItem');
+                    }
+
+                    return this._insertItemByPropertyName(propertyPath, item);
                 }
             }, {
                 key: "removeItem",
@@ -6271,7 +6297,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         throw new Error('required_array_value_to_remove:' + propertyName);
                     }
 
-                    var existingIndex = findIndexByPrimaryKey(currentList, primaryKeyValue);
+                    var existingIndex = findIndexByKeyValue(currentList, this.__primary, primaryKeyValue);
 
                     if (existingIndex < 0) {
                         console.log('record_not_found: ', primaryKeyValue, currentList);
@@ -7967,6 +7993,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var SEPAR = '__';
 
+        var PRIMARY_KEY = 'identifier';
+
         var buildInputName = function (parentPathLevels, propName) {
             var levels = parentPathLevels.concat(propName);
 
@@ -8086,7 +8114,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             // entityPathLevels,
             // entitySchema,
             // entity)
-            var idSetting = entitySettings.id;
+            var idSetting = entitySettings[PRIMARY_KEY];
             if (!idSetting) {
                 throw new Error('required_id_for: ' + elemSectionId);
             }
@@ -8138,7 +8166,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             var elemSection = findOrCreateElemSection(elemRow, elemSectionId, entitySettings, typeCheckers, pathLevels, isGlobalDisplayOnly);
 
-            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem);
+            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY);
 
             return elemSection;
             // Update inner list
@@ -8346,11 +8374,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         //     created: '2010-02-10'
         //   }];
 
-        //   const options = foreignList.map(function(item) {
-        //     // TODO: to spans from string
-        //     return [item.id + '', item.id + ': ' + item.created];
-        //   });
-
         //   options.unshift([null, 'select...']);
 
         //   // TODO: remove freshList from foreign list (or mark selected)
@@ -8369,7 +8392,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var SEPAR = '__';
 
         module.exports = {
-            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem) {
+            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
                 if (!elemSection) {
                     throw new Error('required_elemSection');
                 }
@@ -8382,7 +8405,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var allPathLevels = ['root'].concat(pathLevels);
 
                 var ids = entityList.map(function (entity) {
-                    return allPathLevels.concat(entity.id).join(SEPAR) + '_content';
+                    return allPathLevels.concat(entity[PRIMARY_KEY]).join(SEPAR) + '_content';
                 });
 
                 var currentElems = elemSection.children;
@@ -8403,7 +8426,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         throw new Error('required_entity');
                     }
 
-                    var entityPathLevels = pathLevels.concat(entity.id);
+                    var entityPathLevels = pathLevels.concat(entity[PRIMARY_KEY]);
 
                     var elemEntity = buildEntityElem(elemSection, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly);
 
@@ -8415,7 +8438,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         buttonRemoveItem.textContent = 'X';
                         buttonRemoveItem.type = 'button';
                         buttonRemoveItem.setAttribute('data-action', 'removeItem');
-                        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify({ id: entity.id }));
+                        var oidObject = {};
+                        oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+
+                        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
                         buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
                         elemEntity.appendChild(buttonRemoveItem);
                     }
@@ -8640,7 +8666,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var pubsub = require('./pubsub');
         var initialState = require('./initial-state');
 
-        var store = new ComputedState(modelTemplate);
+        var store = new ComputedState(modelTemplate, 'identifier');
 
         store.update(initialState);
 
@@ -8720,27 +8746,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // rootContent.appendChild(buttonTabNext);
     }, { "../../vm-schema": 2, "./initial-state": 46, "./input-polyfill": 47, "./pubsub": 48, "computed-state": 17 }], 46: [function (require, module, exports) {
         module.exports = {
-            id: 0,
+            identifier: 0,
             name: 'Полис ВЗР',
             description: 'Электронный страховой полис для выезда за границу: страхование жизни и здоровья, имущества, ответственности и др.',
             insuredEvent: {
-                id: 0,
+                identifier: 0,
                 durationMax: 'P1Y-1D', // 1 year - 1 day
                 startDate: '2017-03-03', // tomorrow
                 startDateMin: '2017-03-02', // today
                 isFixed: false
             },
             insurer: {
-                id: 0,
+                identifier: 0,
                 age: 111
                 // query.insurer ? (parseInt(query.insurer.age) || null) : null
             },
             insurants: [{
-                id: 1,
+                identifier: 1,
                 name: 'Jane',
                 age: null
             }, {
-                id: 2,
+                identifier: 2,
                 name: 'John',
                 age: null
             }],
@@ -8823,6 +8849,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var entityBuilder = require('./controls/entity-builder');
         var typeCheckers = require('../../vm-schema').types;
 
+        var PRIMARY_KEY = 'identifier';
+
         var getTypedValue = function (elem) {
             switch (elem.type) {
                 case 'checkbox':
@@ -8846,11 +8874,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         };
 
         module.exports = function (rootContainer, store) {
-            var insertItem = function (entityListPath, propValue) {
+            var insertItem = function (entityListPath, itemInsert) {
                 try {
-                    store.insertItem(entityListPath, {
-                        id: propValue
-                    });
+                    store.insertItem(entityListPath, itemInsert);
                 } catch (exc) {
                     // console.log('exc', exc);
                     alert(exc.message);
@@ -8924,7 +8950,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
 
                     if (dataAction === 'insertItem') {
-                        insertItem(entityListPath, propValue);
+                        var itemInsert = {};
+                        itemInsert[PRIMARY_KEY] = propValue;
+                        insertItem(entityListPath, itemInsert);
                     } else if (dataAction === 'removeItem') {
                         var oid = elem.getAttribute('data-entity-oid');
                         var idToRemove = void 0;
@@ -8970,7 +8998,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var oid = elem.getAttribute('data-entity-oid');
                 var idToRemove = void 0;
                 try {
-                    idToRemove = JSON.parse(oid).id;
+                    idToRemove = JSON.parse(oid)[PRIMARY_KEY];
                 } catch (exc) {
                     console.warn('parse_error: ', elem.id);
                     throw exc;

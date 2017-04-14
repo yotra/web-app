@@ -4600,7 +4600,7 @@ var isDateBetweenInclusive = function(date, min, max) {
 
 // событие, например тур, путешествие, прокат, полёт и т.п.
 module.exports = {
-  id: { type: 'Integer', label: 'ID' },
+  identifier: { type: 'Integer', label: 'ID' },
 
   durationMax: {
     type: 'Duration', // P1Y2M3D
@@ -4931,7 +4931,7 @@ var person = require('./person');
 var insurant = {};
 extend(insurant, person, {
   // override person.id (Integer)
-  id: {
+  identifier: {
     type: 'Decade',
     label: 'ИД застрахованного'
   },
@@ -4939,8 +4939,8 @@ extend(insurant, person, {
   orderNumber: {
     type: 'Text',
     label: 'Застрахованное лицо №',
-    computed: ['id', function(id) {
-      return id + ''; // or id + 1 (for 0-based ids)
+    computed: ['identifier', function(identifier) {
+      return identifier + ''; // or id + 1 (for 0-based ids)
     }]
   },
 
@@ -4972,7 +4972,7 @@ const typeCountry = require('./types').Country;
 
 // место действия полиса: страна, группа стран
 module.exports = {
-  id: {
+  identifier: {
     type: 'Country',
     label: 'ИД'
   },
@@ -4980,9 +4980,9 @@ module.exports = {
   name: {
     type: 'Text',
     label: 'Страна',
-    computed: ['id', function(id) {
+    computed: ['identifier', function(identifier) {
       return typeCountry.allowed.filter(function(c) {
-        return c.id === id;
+        return c.id === identifier;
       })[0].name;
     }]
   },
@@ -5004,17 +5004,17 @@ module.exports = {
   isDateVisaRequired: {
     type: 'Boolean',
     label: 'Требуется ли указание даты получения визы',
-    computed: ['id', function(id) {
-      return id === 'estonia' || id === 'finland';
+    computed: ['identifier', function(identifier) {
+      return identifier === 'estonia' || identifier === 'finland';
     }]
   },
 
   isShengen: {
     type: 'Boolean',
     label: 'Входит ли страна в Шенген',
-    computed: ['id', function(id) {
+    computed: ['identifier', function(identifier) {
       // TODO
-      return id === 'italy' || id === 'spain';
+      return identifier === 'italy' || identifier === 'spain';
     }]
   }
 };
@@ -5023,7 +5023,7 @@ module.exports = {
 'use strict';
 
 module.exports = {
-  id: {
+  identifier: {
     type: 'Integer',
     label: 'ИД'
   },
@@ -5062,7 +5062,7 @@ module.exports = {
 'use strict';
 
 module.exports = {
-  id: {
+  identifier: {
     type: 'Integer',
     label: 'Идентификатор продукта'
   },
@@ -5090,9 +5090,9 @@ module.exports = {
   infoUrl: {
     type: 'URL',
     label: 'Адрес продукта',
-    computed: ['id', function(id) {
-      if (id === null) { return null; }
-      return './product/' + id;
+    computed: ['identifier', function(identifier) {
+      if (identifier === null) { return null; }
+      return './product/' + identifier;
     }]
   }
 };
@@ -5115,7 +5115,7 @@ extend(insurerSchema, personSchema, {});
 
 // http://schema.org/FinancialService
 module.exports = {
-  id: { type: 'Integer', label: 'ID' },
+  identifier: { type: 'Integer', label: 'ID' },
 
   name: {
     type: 'Text',
@@ -5179,8 +5179,8 @@ module.exports = {
   insuredPlacesWarning: {
     type: 'Text',
     label: 'Валидация стран',
-    computed: ['id', 'insuredPlaces', function(id, insuredPlaces) {
-      if (id === null) { return null; }
+    computed: ['identifier', 'insuredPlaces', function(identifier, insuredPlaces) {
+      if (identifier === null) { return null; }
 
       if (insuredPlaces.length < 1) {
         return 'Выберите хотя бы одну страну';
@@ -5193,8 +5193,8 @@ module.exports = {
   insuredEventWarning: {
     type: 'Text',
     label: 'Валидация дат поездки',
-    computed: ['id', 'insuredEvent', function(id, insuredEvent) {
-      if (id === null ||
+    computed: ['identifier', 'insuredEvent', function(identifier, insuredEvent) {
+      if (identifier === null ||
           insuredEvent === null) {
         return null;
       }
@@ -5210,8 +5210,8 @@ module.exports = {
   insurantsWarning: {
     type: 'Text',
     label: 'Валидация застрахованных лиц',
-    computed: ['id', 'insurants', function(id, insurants) {
-      if (id === null) { return null; }
+    computed: ['identifier', 'insurants', function(identifier, insurants) {
+      if (identifier === null) { return null; }
 
       // all insurants must be filled
       // at least one insurant must be
@@ -5234,8 +5234,8 @@ module.exports = {
   calculableWarning: {
     type: 'Text',
     label: 'необходимо заполнить',
-    computed: ['id', 'insuredPlacesWarning', 'insurantsWarning', function (id, insuredPlacesWarning, insurantsWarning) {
-      if (id === null) { return null; }
+    computed: ['identifier', 'insuredPlacesWarning', 'insurantsWarning', function (identifier, insuredPlacesWarning, insurantsWarning) {
+      if (identifier === null) { return null; }
       if (insuredPlacesWarning) { return insuredPlacesWarning; }
 
       if (insurantsWarning) { return insurantsWarning; }
@@ -5249,12 +5249,12 @@ module.exports = {
     type: 'Boolean',
     label: 'Возможен ли расчёт?',
     computed: [
-      'id',
+      'identifier',
       'insuredPlacesWarning',
       'insuredEventWarning',
       'insurantsWarning',
-      function(id, w1, w2, w3) {
-        if (id === null ||
+      function(identifier, w1, w2, w3) {
+        if (identifier === null ||
             w1 === null ||
             w2 === null ||
             w3 === null) {
@@ -5548,7 +5548,7 @@ const subscribeAny = function(callback, watchedKeys, anyListeners) {
  * @returns {Object} Scope of instances of settings
  */
 const buildSettings = function(config) {
-  var settings = {};
+  const settings = {};
   Object.keys(config).forEach(function(propName) {
     settings[propName] = new Setting(propName, config[propName]);
   });
@@ -5556,11 +5556,20 @@ const buildSettings = function(config) {
   return settings;
 };
 
+/**
+ * @param {Object} rootEntityConfig A template for root entity
+ * @param {String?} initialPrimaryKey A name of primary property,
+ *         like 'id' or 'identifier'. One name for all entities.
+ *         By default: 'id'
+ * @returns An instance of ComputedState
+ */
 class ComputedState {
-  constructor(rootConfig) {
-    const rootSettings = buildSettings(rootConfig);
+  constructor(rootEntityConfig, initialPrimaryKey) {
+    const primaryKey = initialPrimaryKey || 'id';
 
-    this._rootEntity = new Computer(rootSettings);
+    const rootSettings = buildSettings(rootEntityConfig);
+
+    this._rootEntity = new Computer(rootSettings, primaryKey);
     this._listeners = [];
     this._asyncListeners = [];
 
@@ -5701,8 +5710,8 @@ class ComputedState {
     this.operate(this._rootEntity.insertItem(propertyPath, item));
   }
 
-  removeItem(propertyPath, id) {
-    this.operate(this._rootEntity.removeItem(propertyPath, id));
+  removeItem(propertyPath, primaryKeyValue) {
+    this.operate(this._rootEntity.removeItem(propertyPath, primaryKeyValue));
   }
 
   subscribe(callback, watchedKeys) {
@@ -5743,22 +5752,20 @@ module.exports = ComputedState;
 
 const Effect = require('./effect');
 
-const PRIMARY_KEY = 'id';
-
-const findIndexByPrimaryKey = function(list, primaryKey) {
+const findIndexByKeyValue = function(list, propertyKey, propertyValue) {
   for (let i = 0, l = list.length; i < l; i += 1) {
-    if (list[i][PRIMARY_KEY] === primaryKey) {
+    if (list[i][propertyKey] === propertyValue) {
       return i;
     }
   }
   return -1;
 };
 
-const findItemByPrimaryKey = function(list, primaryKeyString) {
+const findItemByKeyValue = function(list, propertyKey, propertyValueString) {
   return list.filter(function(elem) {
     // country['id'] === 'usa'
     // 'members.5.name' -  typeof '5' === 'string'
-    return (elem[PRIMARY_KEY] + '') === primaryKeyString;
+    return (elem[propertyKey] + '') === propertyValueString;
   })[0];
 };
 
@@ -5778,9 +5785,18 @@ const levelsToPath = function(levels) {
 class Computer {
   /**
    * @param {Object} settings Common settings for all instances
+   * @param {String?} primaryKey A name of primary property, like 'id'
    */
-  constructor(settings) {
-    if (!settings) { throw new Error('settings_required'); }
+  constructor(settings, primaryKey) {
+    if (!settings) { throw new Error('required_settings'); }
+    if (!primaryKey) { throw new Error('required_primaryKey'); }
+
+    Object.defineProperty(this, '__primary', {
+      value: primaryKey,
+      writable: false,
+      enumerable: false,
+      configurable: false
+    });
 
     Object.defineProperty(this, '__effects', {
       value: [],
@@ -5853,7 +5869,7 @@ class Computer {
   _createByType(entityConfig, value) {
     // value = { name: 'bar', lname: 'foo', person: { age: 123 } }
     // 1. create 2. update props (with effects)
-    const needEntity = new this.constructor(entityConfig);
+    const needEntity = new this.constructor(entityConfig, this.__primary);
     needEntity.update(value);
     return needEntity;
   }
@@ -6042,7 +6058,7 @@ class Computer {
       const elemPrimaryKey = nextLevels[0];
       // search by index of an array
       // it can be replaced with search by id of item
-      const mainItem = findItemByPrimaryKey(mainEntity, elemPrimaryKey);
+      const mainItem = findItemByKeyValue(mainEntity, this.__primary, elemPrimaryKey);
 
       if (!mainItem) {
         // console.log('mainItem', elemPrimaryKey, JSON.stringify(mainObject));
@@ -6176,6 +6192,52 @@ class Computer {
     return this._runBatchedEffects(changedPropNames);
   }
 
+  _insertItemByPropertyName(propertyName, item) {
+    const propertySetting = this.__settings[propertyName];
+
+    if (!propertySetting) {
+      throw new Error('no_such_property_to_insert: ' + propertyName);
+    }
+
+    const propertyType = propertySetting.type;
+
+    if (propertyType !== 'ItemList') {
+      throw new Error('required_ItemList_type_to_insert:' + propertyName);
+    }
+
+    // [{ id: 123, name: 'John' }, { id: 234, name: Jane }]
+    const currentList = this[propertyName];
+
+    if (Array.isArray(currentList) === false) {
+      throw new Error('required_array_to_insert:' + propertyName);
+    }
+
+    const primaryPropertyKey = this.__primary;
+
+    // TODO: verify id unique through all table
+    // TODO: insert, using sorting by id
+    if (item[primaryPropertyKey] === null || item[primaryPropertyKey] === undefined) {
+      throw new Error('required_primary_key_for_prop: ' + primaryPropertyKey + ': ' + propertyName);
+    }
+
+    const existingIndex = findIndexByKeyValue(currentList, primaryPropertyKey, item[primaryPropertyKey]);
+
+    if (existingIndex >= 0) {
+      console.log('already_exist: ' + propertyName);
+      return null;
+    }
+
+    // ('students', {id: 1, name: 'Jane'})
+    const itemInstance = this._createInstanceFromValue(propertyName, item);
+
+    // append new item to the store
+    currentList.push(itemInstance);
+
+    const scopeOfPropNames = {};
+    scopeOfPropNames[propertyName] = this._runPropEffects(propertyName);
+    return scopeOfPropNames;
+  }
+
   /**
    * Insert to an array
    * - insertItem('tasks',  {id: 2, name: 'asdf'})
@@ -6185,12 +6247,6 @@ class Computer {
    * @returns {undefined}
    */
   insertItem(propertyPath, item) {
-    // TODO: verify id unique through all table
-    // TODO: insert, using sorting by id
-    if (item[PRIMARY_KEY] === null || item[PRIMARY_KEY] === undefined) {
-      throw new Error('required_primary_key_for_prop: ' + PRIMARY_KEY + ': ' + propertyPath);
-    }
-
     // duplication of _updatePath
     const levels = pathToLevels(propertyPath);
     const mainLevel = levels[0];
@@ -6200,43 +6256,9 @@ class Computer {
 
     if (levels.length > 1) {
       return this._iterateLevels(mainLevel, levels.slice(1), item, 'insertItem');
-      // return null;
     }
 
-    const propertyName = propertyPath; // 1-level
-
-    if (!this.__settings[propertyName]) {
-      throw new Error('no_such_property_to_insert: ' + propertyName);
-    }
-
-    const propType = this.__settings[propertyName].type;
-
-    if (propType !== 'ItemList') {
-      throw new Error('required_ItemList_type_to_insert:' + propertyName);
-    }
-
-    var currentList = this[propertyName];
-
-    if (Array.isArray(currentList) === false) {
-      throw new Error('required_array_to_insert:' + propertyName);
-    }
-
-    var existingIndex = findIndexByPrimaryKey(currentList, item[PRIMARY_KEY]);
-
-    if (existingIndex >= 0) {
-      console.log('already_exist: ' + propertyName);
-      return null;
-    }
-
-    // ('students', {id: 1, name: 'Jane'})
-    var itemInstance = this._createInstanceFromValue(propertyName, item);
-
-    // append new item to the store
-    currentList.push(itemInstance);
-
-    var scopeOfPropNames = {};
-    scopeOfPropNames[propertyName] = this._runPropEffects(propertyName);
-    return scopeOfPropNames;
+    return this._insertItemByPropertyName(propertyPath, item);
   }
 
   removeItem(propertyPath, primaryKeyValue) {
@@ -6265,7 +6287,7 @@ class Computer {
       throw new Error('required_array_value_to_remove:' + propertyName);
     }
 
-    var existingIndex = findIndexByPrimaryKey(currentList, primaryKeyValue);
+    var existingIndex = findIndexByKeyValue(currentList, this.__primary, primaryKeyValue);
 
     if (existingIndex < 0) {
       console.log('record_not_found: ', primaryKeyValue, currentList);
@@ -8044,6 +8066,8 @@ const entityListWrapper = require('./entity-list-wrapper');
 
 const SEPAR = '__';
 
+const PRIMARY_KEY = 'identifier';
+
 const buildInputName = function(parentPathLevels, propName) {
   const levels = parentPathLevels.concat(propName);
 
@@ -8173,7 +8197,7 @@ const findOrCreateElemSection = function(elemRow,
   // entityPathLevels,
   // entitySchema,
   // entity)
-  const idSetting = entitySettings.id;
+  const idSetting = entitySettings[PRIMARY_KEY];
   if (!idSetting) {
     throw new Error('required_id_for: ' + elemSectionId);
   }
@@ -8242,7 +8266,8 @@ const buildEntityListElem = function(elemRow,
                                 pathLevels,
                                 typeCheckers,
                                 isGlobalDisplayOnly,
-                                buildEntityElem);
+                                buildEntityElem,
+                                PRIMARY_KEY);
 
   return elemSection;
   // Update inner list
@@ -8477,11 +8502,6 @@ module.exports = buildEntityElem;
 //     created: '2010-02-10'
 //   }];
 
-//   const options = foreignList.map(function(item) {
-//     // TODO: to spans from string
-//     return [item.id + '', item.id + ': ' + item.created];
-//   });
-
 //   options.unshift([null, 'select...']);
 
 //   // TODO: remove freshList from foreign list (or mark selected)
@@ -8500,7 +8520,7 @@ module.exports = buildEntityElem;
 const SEPAR = '__';
 
 module.exports = {
-  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem) {
+  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
     if (!elemSection) {
       throw new Error('required_elemSection');
     }
@@ -8513,7 +8533,7 @@ module.exports = {
     const allPathLevels = ['root'].concat(pathLevels);
 
     const ids = entityList.map(function(entity) {
-      return allPathLevels.concat(entity.id).join(SEPAR) + '_content';
+      return allPathLevels.concat(entity[PRIMARY_KEY]).join(SEPAR) + '_content';
     });
 
     const currentElems = elemSection.children;
@@ -8534,7 +8554,7 @@ module.exports = {
         throw new Error('required_entity');
       }
 
-      const entityPathLevels = pathLevels.concat(entity.id);
+      const entityPathLevels = pathLevels.concat(entity[PRIMARY_KEY]);
 
       const elemEntity = buildEntityElem(elemSection,
                                          entityPathLevels,
@@ -8551,7 +8571,10 @@ module.exports = {
         buttonRemoveItem.textContent = 'X';
         buttonRemoveItem.type = 'button';
         buttonRemoveItem.setAttribute('data-action', 'removeItem');
-        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify({ id: entity.id }));
+        const oidObject = {};
+        oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+
+        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
         buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
         elemEntity.appendChild(buttonRemoveItem);
       }
@@ -8784,7 +8807,7 @@ const inputPolyfill = require('./input-polyfill');
 const pubsub = require('./pubsub');
 const initialState = require('./initial-state');
 
-const store = new ComputedState(modelTemplate);
+const store = new ComputedState(modelTemplate, 'identifier');
 
 store.update(initialState);
 
@@ -8871,27 +8894,27 @@ tabs.forEach(function(tabName) {
 
 },{"../../vm-schema":2,"./initial-state":46,"./input-polyfill":47,"./pubsub":48,"computed-state":17}],46:[function(require,module,exports){
 module.exports = {
-  id: 0,
+  identifier: 0,
   name: 'Полис ВЗР',
   description: 'Электронный страховой полис для выезда за границу: страхование жизни и здоровья, имущества, ответственности и др.',
   insuredEvent: {
-    id: 0,
+    identifier: 0,
     durationMax: 'P1Y-1D', // 1 year - 1 day
     startDate: '2017-03-03', // tomorrow
     startDateMin: '2017-03-02', // today
     isFixed: false
   },
   insurer: {
-    id: 0,
+    identifier: 0,
     age: 111
     // query.insurer ? (parseInt(query.insurer.age) || null) : null
   },
   insurants: [{
-    id: 1,
+    identifier: 1,
     name: 'Jane',
     age: null
   }, {
-    id: 2,
+    identifier: 2,
     name: 'John',
     age: null
   }],
@@ -8974,6 +8997,8 @@ module.exports = {
 const entityBuilder = require('./controls/entity-builder');
 const typeCheckers = require('../../vm-schema').types;
 
+const PRIMARY_KEY = 'identifier';
+
 const getTypedValue = function(elem) {
   switch (elem.type) {
     case 'checkbox':
@@ -8997,11 +9022,9 @@ const getTypedValue = function(elem) {
 };
 
 module.exports = function(rootContainer, store) {
-  const insertItem = function(entityListPath, propValue) {
+  const insertItem = function(entityListPath, itemInsert) {
     try {
-      store.insertItem(entityListPath, {
-        id: propValue
-      });
+      store.insertItem(entityListPath, itemInsert);
     } catch (exc) {
       // console.log('exc', exc);
       alert(exc.message);
@@ -9075,7 +9098,9 @@ module.exports = function(rootContainer, store) {
       }
 
       if (dataAction === 'insertItem') {
-        insertItem(entityListPath, propValue);
+        const itemInsert = {};
+        itemInsert[PRIMARY_KEY] = propValue;
+        insertItem(entityListPath, itemInsert);
       } else if (dataAction === 'removeItem') {
         const oid = elem.getAttribute('data-entity-oid');
         let idToRemove;
@@ -9121,7 +9146,7 @@ module.exports = function(rootContainer, store) {
     const oid = elem.getAttribute('data-entity-oid');
     let idToRemove;
     try {
-      idToRemove = JSON.parse(oid).id;
+      idToRemove = JSON.parse(oid)[PRIMARY_KEY];
     } catch (exc) {
       console.warn('parse_error: ', elem.id);
       throw exc;

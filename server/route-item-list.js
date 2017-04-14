@@ -23,7 +23,7 @@ module.exports = function (req, res) {
 
   // TODO: extract url parameters
 
-  const store = new ComputedState(modelTemplate);
+  const store = new ComputedState(modelTemplate, 'identifier');
   store.update(initialState);
 
   const entity = store.getEntity();

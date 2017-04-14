@@ -22,14 +22,14 @@ describe('person-markup-generator', function() {
     container.id = 'root';
     document.body.appendChild(container);
 
-    store = new ComputedState(modelTemplate);
+    store = new ComputedState(modelTemplate, 'identifier');
 
     const rootLabel = document.createElement('h1');
     rootLabel.textContent = 'Person';
     container.appendChild(rootLabel);
 
     store.update({
-      id: 'asdf'
+      identifier: 'asdf'
     });
 
     entityBuilder(container,
@@ -96,11 +96,11 @@ describe('person-markup-generator', function() {
     store.subscribe(function(changedKeys, state) {
       expect(changedKeys).to.deep.equal(['memberships']);
       expect(state.memberships).to.deep.equal([{
-        id: 123,
+        identifier: 123,
         created: '2010-01-01',
         cid: 'c123'
       }, {
-        id: 234,
+        identifier: 234,
         created: '2010-02-01',
         cid: 'c234'
       }]);
@@ -125,7 +125,7 @@ describe('person-markup-generator', function() {
 
       // // console.log(entityElem.innerHTML);
 
-      const idElem = mainNode.querySelector('[itemprop=id]');
+      const idElem = mainNode.querySelector('[itemprop=identifier]');
       expect(idElem).to.not.null;
       expect(idElem.value).to.equal('123');
 
@@ -142,17 +142,17 @@ describe('person-markup-generator', function() {
 
     store.update({
       memberships: [{
-        id: 123,
+        identifier: 123,
         created: '2010-01-01'
       }, {
-        id: 234,
+        identifier: 234,
         created: '2010-02-01'
       }]
     });
 
     // or:
     // store.insertItem('memberships', {
-    //   id: 123,
+    //   identifier: 123,
     //   created: '2010-01-01'
     // });
   });
@@ -160,10 +160,10 @@ describe('person-markup-generator', function() {
   it('should update inner item', function (done) {
     store.update({
       memberships: [{
-        id: 123,
+        identifier: 123,
         created: '2010-01-01'
       }, {
-        id: 234,
+        identifier: 234,
         created: '2010-02-01'
       }]
     });
