@@ -940,7 +940,7 @@ input[type="radio"] {
   z-index: 10;
 }
 
-#root__insuredPlacesWarning > label {
+#root__insuredPlacesWarning_label {
   display: none;
 }
 
@@ -975,7 +975,7 @@ input[type="radio"] {
   z-index: 9;
 }
 
-#root__insuredEventWarning > label {
+#root__insuredEventWarning_label {
   display: none;
 }
 
@@ -1010,7 +1010,7 @@ input[type="radio"] {
   z-index: 8;
 }
 
-#root__insurantsWarning > label {
+#root__insurantsWarning_label {
   display: none;
 }
 
@@ -1045,7 +1045,7 @@ input[type="radio"] {
   z-index: 6;
 }
 
-#root__offersWarning > label {
+#root__offersWarning_label {
   display: none;
 }
 

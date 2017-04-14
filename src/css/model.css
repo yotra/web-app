@@ -15,7 +15,7 @@
     left: 0;
     text-align: center;
 
-    > label { display: none; }
+    &_label { display: none; }
 
     &_content {
       color: #000;

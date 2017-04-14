@@ -3,6 +3,8 @@
 // const microdata = require('./helpers/microdata');
 const SEPAR = '__';
 
+const microdata = require('./helpers/microdata');
+
 module.exports = {
   updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
     if (!elemSection) {
@@ -33,7 +35,7 @@ module.exports = {
 
     // update or insert
     // TODO: index -> position
-    entityList.forEach(function(entity) {
+    entityList.forEach(function(entity, index) {
       if (!entity) {
         throw new Error('required_entity');
       }
@@ -46,6 +48,8 @@ module.exports = {
                                          entity,
                                          typeCheckers,
                                          isGlobalDisplayOnly);
+
+      microdata.markPropertyAsListItem(elemEntity, index + 1);
 
       const btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
 

@@ -14,7 +14,7 @@ const entityListWrapper = require('./entity-list-wrapper');
 
 const SEPAR = '__';
 
-const PRIMARY_KEY = 'identifier';
+const PRIMARY_KEY = 'url';
 
 const buildInputName = function(parentPathLevels, propName) {
   const levels = parentPathLevels.concat(propName);
@@ -72,7 +72,8 @@ const buildEntityElem = function(elemRow,
 
   const elemEntityId = allPathLevels.join(SEPAR) + '_content';
 
-  // // TODO: find from parentElem (not from document)
+  // entityId can be a plain text or Number
+  // but can not be URL with slashes: /projects/123
   let elemEntity = elemRow.querySelector('#' + elemEntityId);
 
   if (!entity) {
@@ -124,7 +125,7 @@ const findOrCreateElemSection = function(elemRow,
   // TODO: change to UL or something listable
   const elemCreated = document.createElement('div');
   elemCreated.id = elemSectionId;
-  microdata.markEntity(elemCreated, 'ItemList');
+  microdata.markEntityList(elemCreated);
   elemRow.appendChild(elemCreated);
 
   // id can be calculated during insertion
@@ -247,6 +248,7 @@ const buildSimpleElem = function(elemRow,
   if (!elemProp) {
     const typeChecker = typeCheckers[propType];
 
+    // a property is created, then - filled with data
     if (isDisplayOnly) {
       elemProp = propFactory.createDisplay(propType, typeChecker);
     } else {
@@ -290,7 +292,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
   const pathLevels = parentPathLevels.concat(propName);
 
   switch (propType) {
-    case 'Item':
+    case microdata.ENTITY:
       if (!childEntitySettings) {
         throw new Error('required_ref_for_Item');
       }
@@ -317,7 +319,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
       // itemprop must be outside of scope
       // <div itemprop="student" itemscope itemtype="Person">
       // it's a logical error: inner components do not depend of outer
-    case 'ItemList':
+    case microdata.ENTITY_LIST:
       // if no propVaule (entity) - use this settings to build
       //   the insertion form
       if (!childEntitySettings) {
@@ -428,35 +430,3 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
 // props.entitySchema,
 // props.entity
 module.exports = buildEntityElem;
-
-//   // foreach props - create input, append to div
-//   // 'simple' - input
-//   // 'Item': again this element with different props
-//   // 'ItemList': new container with this elements
-// };
-
-
-// freshList (or ids)
-// const buildItemInsertElem = function(pathLevels) {
-//   // TODO: load foreignList from store (or url)
-//   const foreignList = [{
-//     id: 51,
-//     created: '2010-01-10'
-//   }, {
-//     id: 52,
-//     created: '2010-01-20'
-//   }, {
-//     id: 53,
-//     created: '2010-02-10'
-//   }];
-
-//   options.unshift([null, 'select...']);
-
-//   // TODO: remove freshList from foreign list (or mark selected)
-
-//   // build readable form from items <select><option></select>
-//   // TODO: async url to load items
-//   // add handler to select some item: insertItem to pahtLevels
-//   // TODO: add search field for quick adding
-// };
-

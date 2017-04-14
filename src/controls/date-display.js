@@ -2,7 +2,7 @@
 
 'use strict';
 
-module.exports = function(props, doc) {
-  const elem = doc.createElement('span');
+module.exports = function() {
+  const elem = document.createElement('span');
   return elem;
 };

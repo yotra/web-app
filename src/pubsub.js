@@ -3,7 +3,7 @@
 const entityBuilder = require('./controls/entity-builder');
 const typeCheckers = require('../../vm-schema').types;
 
-const PRIMARY_KEY = 'identifier';
+const PRIMARY_KEY = 'url';
 
 const getTypedValue = function(elem) {
   switch (elem.type) {

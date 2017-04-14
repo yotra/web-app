@@ -121,3 +121,83 @@ Letter = "A".."Z";
 - вычисление калькулируемых свойств
 - построение разметки на основе модели
 - выдача разметки на клиент
+
+
+Стилизация списков
+---
+
+Кейс: список продуктов (название, цена)
+
+```
+<div id="records" itemscope itemtype="http://schema.org/MusicAlbum">
+  <span itemprop="name">King of Limbs</span>
+  <span itemprop="byArtist">Radiohead</span>
+  <div itemprop="track" itemscope itemtype="http://schema.org/ItemList">
+    <span itemprop="numberOfItems" content=8 />
+    <div itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+      <span itemprop="position">1</span>
+      <div id="records__1" itemprop="item" itemscope itemtype="http://schema.org/MusicRecording">
+        <span itemprop="name">Bloom</span>
+      </div>
+    </div>
+    <div itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+      <span itemprop="position">2</span>
+      <div id="records__2" itemprop="item" itemscope itemtype="http://schema.org/MusicRecording">
+        <span itemprop="name">Morning Mr. Magpie</span>
+      </div>
+    </div>
+    <div itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+      <span itemprop="position">3</span>
+      <div id="records__3" itemprop="item" itemscope itemtype="http://schema.org/MusicRecording">
+        <span itemprop="name">Little by Little</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Решение (свойства должны быть прямыми потомками соответствующей сущности):
+
+
+Универсальный стиль для всех песен на странице:
+
+- [itemtype="MusicRecording"] > [itemprop="name"]
+- [itemtype="MusicRecording"] > [itemprop="description"]
+
+
+Уникальный стиль для конкретной песни:
+
+- #records__3 > [itemprop="name"] { color: green; }
+
+
+Идентификаторы сущностей
+---
+
+Кейс: отображать список песен на сайте.
+
+Решение:
+
+обычно требуется отображать с привязкой к какой-либо корневой сущности, например:
+- все песни конкретного исполнителя: Sting > songs
+- все любимые песни пользователя: John > songs ? favorite
+- топ-парад песен (привязка непосредственно к корню сайта): Site > songs ? top
+
+То есть нет какой-либо конкретной страницы: /songs, отображающей песни без привязки к чему-либо. И вышеперечисленные варианты будут отображаться на страницах со следующими адресами:
+- /Singer-Sting
+- /User-John
+- / (корень сайта)
+
+Соответственно адреса страниц определяются схемой: Сущность-Идентификатор
+
+Подобные составные идентификаторы можно использовать и в микроразметке данных, используя поле URL, как рекомендуемое поисковиками для идентификации сущности. Все сущности в БД имеют разные имена, поэтому пересечений не будет.
+Поле URL - внутренний идентификатор в системе, а заодно и url-адрес на разрабатываемом сайте. Для внешних URL адресов используются другие свойства, например sameAs.
+
+В названиях сущностей и идентификаторов желательно использовать только разрешённые символы для URL, например [A-Za-z0-9_-]. Это позволит избежать лишних работ по кодированию и декодированию данных для их использованию в веб-приложениях.
+
+> Using the url property. Some web pages are about a specific item. For example, you may have a web page about a single person, which you could mark using the Person item type. Others have a collection of items. For example, your company website could have a page listing employees, with a link to a profile page for each person. For pages like this with a collection of items, you should mark each item separately (in this case a series of Persons) and add the url property to the link to the corresponding page for each item, like this:
+
+```
+<div itemscope itemtype="http://schema.org/Person"> <a href="alice.html" itemprop="url">Alice Jones</a> </div>
+<div itemscope itemtype="http://schema.org/Person"> <a href="bob.html" itemprop="url">Bob Smith</a> </div>
+```
+

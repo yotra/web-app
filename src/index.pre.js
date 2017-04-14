@@ -7,7 +7,7 @@ const inputPolyfill = require('./input-polyfill');
 const pubsub = require('./pubsub');
 const initialState = require('./initial-state');
 
-const store = new ComputedState(modelTemplate, 'identifier');
+const store = new ComputedState(modelTemplate, 'url');
 
 store.update(initialState);
 
@@ -63,7 +63,7 @@ if (policy.isCalculable === true) {
   needTab = 'offers';
 } else {
   // TODO: вычислить нужную вкладку, пока что первая
-  needTab = 'insuredPlaces';
+  needTab = 'insurants'; //'insuredPlaces';
 }
 
 goToTab(needTab);
