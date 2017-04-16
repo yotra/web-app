@@ -82,6 +82,23 @@ const parseImageMeta = function(imageMeta) {
   return result;
 };
 
+// siteUrl=http://asdfasdf.asdf/123|superSite
+const parseUrlMeta = function(urlMeta) {
+  const parts = urlMeta.split('|');
+
+  if (!parts[0]) {
+    throw new Error('required_imageMeta_src');
+  }
+
+  const result = {
+    href: parts[0]
+  };
+
+  if (parts[1]) { result.textContent = parts[1]; }
+
+  return result;
+};
+
 const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
 
@@ -90,8 +107,10 @@ const setDisplayValue = function(elemDisplay, value) {
   }
 
   if (elem.tagName === 'A') {
-    elem.href = value || '';
-    elem.textContent = value || '';
+    const urlMeta = parseUrlMeta(value);
+
+    elem.href = urlMeta.href;
+    elem.textContent = urlMeta.textContent || urlMeta.href;
   } else if (elem.tagName === 'IMG') {
     if (value === null) {
       throw new Error('image can not be null at this moment');

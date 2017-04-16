@@ -51,21 +51,23 @@ module.exports = {
 
       microdata.markPropertyAsListItem(elemEntity, index + 1);
 
+      if (isGlobalDisplayOnly) { return; }
+
       const btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
 
-      if (!btn) {
-        // TODO: if not exists
-        const buttonRemoveItem = document.createElement('button');
-        buttonRemoveItem.textContent = 'X';
-        buttonRemoveItem.type = 'button';
-        buttonRemoveItem.setAttribute('data-action', 'removeItem');
-        const oidObject = {};
-        oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+      if (btn) { return; }
 
-        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
-        buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
-        elemEntity.appendChild(buttonRemoveItem);
-      }
+      // TODO: if not exists
+      const buttonRemoveItem = document.createElement('button');
+      buttonRemoveItem.textContent = 'X';
+      buttonRemoveItem.type = 'button';
+      buttonRemoveItem.setAttribute('data-action', 'removeItem');
+      const oidObject = {};
+      oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+
+      buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
+      buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
+      elemEntity.appendChild(buttonRemoveItem);
     });
   }
 };

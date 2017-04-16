@@ -63,7 +63,7 @@ if (policy.isCalculable === true) {
   needTab = 'offers';
 } else {
   // TODO: вычислить нужную вкладку, пока что первая
-  needTab = 'insurants'; //'insuredPlaces';
+  needTab = 'insurants'; // 'insuredPlaces';
 }
 
 goToTab(needTab);
