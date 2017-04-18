@@ -99,6 +99,10 @@ const parseUrlMeta = function(urlMeta) {
   return result;
 };
 
+const convertIsoDate = function(isoDate) {
+  return isoDate.substring(0, 7);
+};
+
 const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
 
@@ -127,6 +131,14 @@ const setDisplayValue = function(elemDisplay, value) {
     elem.setAttribute('data-state', String(value));
     // set to wrap
     elem.parentNode.setAttribute('data-state', String(value));
+  } else if (elem.getAttribute('data-schema-type') === 'Date') {
+    if (value === null) {
+      elem.removeAttribute('content');
+      elem.textContent = '';
+    } else {
+      elem.setAttribute('content', value);
+      elem.textContent = convertIsoDate(value);
+    }
   } else {
     elem.textContent = value === null ? '' : (value + '');
     // TODO debugging
