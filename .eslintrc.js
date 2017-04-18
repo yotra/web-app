@@ -54,7 +54,7 @@ module.exports = {
     "no-underscore-dangle": "off",
     "no-var": "off",
     "strict": "off",
-    "no-param-reassign": "warn",
+    "no-param-reassign": [ "error", { "props": false }],
     "no-console": "off",
     "spaced-comment": "warn",
     "space-before-function-paren": "off",

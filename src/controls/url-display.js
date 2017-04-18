@@ -1,7 +1,34 @@
-/** String label */
-
 'use strict';
 
-module.exports = function() {
-  return document.createElement('a');
+// siteUrl=http://asdfasdf.asdf/123|superSite
+// const parseUrlMeta = function(urlMeta) {
+//   const parts = urlMeta.split('|');
+
+//   if (!parts[0]) {
+//     throw new Error('required_imageMeta_src');
+//   }
+
+//   const result = {
+//     href: parts[0]
+//   };
+
+//   if (parts[1]) { result.textContent = parts[1]; }
+
+//   return result;
+// };
+
+module.exports = {
+  build: function() {
+    return document.createElement('a');
+  },
+  update: function(elem, value) {
+    const url = value;
+
+    const urlText = url.replace(/^http:\/\//g, '')
+          .replace(/^https:\/\//g, '')
+          .replace(/\/$/g, '');
+
+    elem.href = url;
+    elem.textContent = urlText;
+  }
 };

@@ -6,7 +6,7 @@
 'use strict';
 
 const propFactory = require('./prop-factory');
-const controlsSetter = require('./controls-setter');
+const propSetter = require('./prop-setter');
 const microdata = require('./helpers/microdata');
 const propRow = require('./prop-row');
 
@@ -262,9 +262,9 @@ const buildSimpleElem = function(elemRow,
   }
 
   if (isDisplayOnly) {
-    controlsSetter.setDisplayValue(elemProp, propValue);
+    propSetter.setDisplayValue(elemProp, propValue);
   } else {
-    controlsSetter.setInputValue(elemProp, propValue);
+    propSetter.setInputValue(elemProp, propValue);
   }
 
   return elemProp;

@@ -22,9 +22,12 @@
 // browserify doesnt support dynamic requires
 const BooleanDisplay = require('./boolean-display');
 const TextDisplay = require('./text-display');
+const TelephoneDisplay = require('./telephone-display');
+const EmailDisplay = require('./email-display');
 const NumberDisplay = require('./number-display');
 const DateDisplay = require('./date-display');
 const UrlDisplay = require('./url-display');
+const UrlIdDisplay = require('./urlid-display');
 const ImageDisplay = require('./image-display');
 
 const BooleanInput = require('./boolean-input');
@@ -42,6 +45,9 @@ const calculateInput = function(tag) {
       return BooleanInput;
     case 'text-input':
     case 'url-input':
+    case 'urlid-input':
+    case 'telephone-input':
+    case 'email-input':
       return TextInput;
     case 'number-input':
     case 'integer-input':
@@ -66,20 +72,26 @@ const calculateInput = function(tag) {
 const calculateDisplay = function(tag) {
   switch (tag) {
     case 'boolean-display':
-      return BooleanDisplay;
+      return BooleanDisplay.build;
+    case 'telephone-display':
+      return TelephoneDisplay.build;
+    case 'email-display':
+      return EmailDisplay.build;
     case 'text-display':
       return TextDisplay;
     case 'url-display':
-      return UrlDisplay;
+      return UrlDisplay.build;
+    case 'urlid-display':
+      return UrlIdDisplay.build;
     case 'image-display':
-      return ImageDisplay;
+      return ImageDisplay.build;
     case 'number-display':
     case 'integer-display':
     case 'float-display':
     case 'age-display':
       return NumberDisplay;
     case 'date-display':
-      return DateDisplay;
+      return DateDisplay.build;
       // case 'duration-display':
       //   return DurationDisplay;
 

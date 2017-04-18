@@ -4,6 +4,14 @@
 
 'use strict';
 
+const DateDisplay = require('./date-display');
+const UrlDisplay = require('./url-display');
+const UrlIdDisplay = require('./urlid-display');
+const TelephoneDisplay = require('./telephone-display');
+const EmailDisplay = require('./email-display');
+const ImageDisplay = require('./image-display');
+const BooleanDisplay = require('./boolean-display');
+
 const reselectOptions = function(elem, value) {
   const options = elem.children;
   for (let i = options.length - 1; i >= 0; i -= 1) {
@@ -63,42 +71,6 @@ const setInputValue = function(elemInput, value) {
   elem.title = String(value);
 };
 
-const parseImageMeta = function(imageMeta) {
-  const parts = imageMeta.split('|');
-
-  if (!parts[0]) {
-    throw new Error('required_imageMeta_src');
-  }
-
-  const result = {
-    src: parts[0]
-  };
-
-  for (let i = 1; i < parts.length; i += 1) {
-    const keyValue = parts[i].split('=');
-    result[keyValue[0]] = keyValue[1];
-  }
-
-  return result;
-};
-
-// siteUrl=http://asdfasdf.asdf/123|superSite
-const parseUrlMeta = function(urlMeta) {
-  const parts = urlMeta.split('|');
-
-  if (!parts[0]) {
-    throw new Error('required_imageMeta_src');
-  }
-
-  const result = {
-    href: parts[0]
-  };
-
-  if (parts[1]) { result.textContent = parts[1]; }
-
-  return result;
-};
-
 const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
 
@@ -106,31 +78,38 @@ const setDisplayValue = function(elemDisplay, value) {
     throw new Error('value_can_not_be_undefined');
   }
 
-  if (elem.tagName === 'A') {
-    const urlMeta = parseUrlMeta(value);
+  const schemaType = elem.getAttribute('data-schema-type');
 
-    elem.href = urlMeta.href;
-    elem.textContent = urlMeta.textContent || urlMeta.href;
-  } else if (elem.tagName === 'IMG') {
-    if (value === null) {
-      throw new Error('image can not be null at this moment');
-    }
-    const imageMeta = parseImageMeta(value);
-    // parse Image string
+  if (!schemaType) {
+    throw new Error('required_data-schema-type');
+  }
 
-    elem.src = imageMeta.src;
-    if (imageMeta.width) { elem.width = imageMeta.width; }
-    if (imageMeta.height) { elem.height = imageMeta.height; }
-    if (imageMeta.alt) { elem.alt = imageMeta.alt; }
-  } else if (elem.hasAttribute('data-state')) {
-    elem.textContent = String(value);
-    elem.setAttribute('data-state', String(value));
-    // set to wrap
-    elem.parentNode.setAttribute('data-state', String(value));
-  } else {
-    elem.textContent = value === null ? '' : (value + '');
-    // TODO debugging
-    elem.title = String(value);
+  switch (schemaType) {
+    case 'URL':
+      UrlDisplay.update(elem, value);
+      return;
+    case 'URLID':
+      UrlIdDisplay.update(elem, value);
+      return;
+    case 'Telephone':
+      TelephoneDisplay.update(elem, value);
+      return;
+    case 'Email':
+      EmailDisplay.update(elem, value);
+      return;
+    case 'Image':
+      ImageDisplay.update(elem, value);
+      return;
+    case 'Boolean':
+      BooleanDisplay.update(elem, value);
+      return;
+    case 'Date':
+      DateDisplay.update(elem, value);
+      return;
+    default:
+      elem.textContent = value === null ? '' : (value + '');
+      // TODO debugging
+      elem.title = String(value);
   }
 };
 
