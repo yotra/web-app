@@ -71,49 +71,6 @@ const setInputValue = function(elemInput, value) {
   elem.title = String(value);
 };
 
-<<<<<<< HEAD:src/controls/prop-setter.js
-=======
-const parseImageMeta = function(imageMeta) {
-  const parts = imageMeta.split('|');
-
-  if (!parts[0]) {
-    throw new Error('required_imageMeta_src');
-  }
-
-  const result = {
-    src: parts[0]
-  };
-
-  for (let i = 1; i < parts.length; i += 1) {
-    const keyValue = parts[i].split('=');
-    result[keyValue[0]] = keyValue[1];
-  }
-
-  return result;
-};
-
-// siteUrl=http://asdfasdf.asdf/123|superSite
-const parseUrlMeta = function(urlMeta) {
-  const parts = urlMeta.split('|');
-
-  if (!parts[0]) {
-    throw new Error('required_imageMeta_src');
-  }
-
-  const result = {
-    href: parts[0]
-  };
-
-  if (parts[1]) { result.textContent = parts[1]; }
-
-  return result;
-};
-
-const convertIsoDate = function(isoDate) {
-  return isoDate.substring(0, 7);
-};
-
->>>>>>> fb26c7d86bbecf71f2525219fcef191b1b6c6798:src/controls/controls-setter.js
 const setDisplayValue = function(elemDisplay, value) {
   const elem = elemDisplay;
 
@@ -123,7 +80,6 @@ const setDisplayValue = function(elemDisplay, value) {
 
   const schemaType = elem.getAttribute('data-schema-type');
 
-<<<<<<< HEAD:src/controls/prop-setter.js
   if (!schemaType) {
     throw new Error('required_data-schema-type');
   }
@@ -154,38 +110,6 @@ const setDisplayValue = function(elemDisplay, value) {
       elem.textContent = value === null ? '' : (value + '');
       // TODO debugging
       elem.title = String(value);
-=======
-    elem.href = urlMeta.href;
-    elem.textContent = urlMeta.textContent || urlMeta.href;
-  } else if (elem.tagName === 'IMG') {
-    if (value === null) {
-      throw new Error('image can not be null at this moment');
-    }
-    const imageMeta = parseImageMeta(value);
-    // parse Image string
-
-    elem.src = imageMeta.src;
-    if (imageMeta.width) { elem.width = imageMeta.width; }
-    if (imageMeta.height) { elem.height = imageMeta.height; }
-    if (imageMeta.alt) { elem.alt = imageMeta.alt; }
-  } else if (elem.hasAttribute('data-state')) {
-    elem.textContent = String(value);
-    elem.setAttribute('data-state', String(value));
-    // set to wrap
-    elem.parentNode.setAttribute('data-state', String(value));
-  } else if (elem.getAttribute('data-schema-type') === 'Date') {
-    if (value === null) {
-      elem.removeAttribute('content');
-      elem.textContent = '';
-    } else {
-      elem.setAttribute('content', value);
-      elem.textContent = convertIsoDate(value);
-    }
-  } else {
-    elem.textContent = value === null ? '' : (value + '');
-    // TODO debugging
-    elem.title = String(value);
->>>>>>> fb26c7d86bbecf71f2525219fcef191b1b6c6798:src/controls/controls-setter.js
   }
 };
 
