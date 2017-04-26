@@ -4,14 +4,14 @@ const membership = {
   // '@context': 'http://schema.org/',
   // '@type': 'Thing',
 
-  identifier: { type: 'Integer', label: 'ID' },
+  url: { type: 'URLID', label: 'ID' },
   created: { type: 'Date', label: 'Creation date' },
-  cid: {
+  upperUrl: {
     type: 'Text',
-    label: 'Text ID',
-    computed: ['identifier', function (identifier) {
-      if (identifier === null) { return null; }
-      return 'c' + identifier;
+    label: 'Upper URL',
+    computed: ['url', function (url) {
+      if (url === null) { return null; }
+      return url.toUpperCase();
     }]
   }
 };
@@ -21,7 +21,7 @@ const person = {
   // '@context': 'http://schema.org/',
   // '@type': 'Person',
 
-  identifier: { type: 'Text', label: 'ID' },
+  url: { type: 'URLID', label: 'ID' },
   birthDate: { type: 'Date', label: 'Birthday' },
 
   /**

@@ -14,6 +14,8 @@ const findPropertyElem = function(entityLayout, propertyName) {
   return entityLayout.querySelector('[itemprop=' + propertyName + ']');
 };
 
+const PRIMARY_KEY = 'url';
+
 describe('policy-markup-generator', function() {
   let store;
   let container;
@@ -22,20 +24,20 @@ describe('policy-markup-generator', function() {
     container.id = 'root';
     document.body.appendChild(container);
 
-    store = new ComputedState(modelTemplate, 'identifier');
+    store = new ComputedState(modelTemplate, 'url');
 
     const rootLabel = document.createElement('h1');
     rootLabel.textContent = 'Policy';
     container.appendChild(rootLabel);
 
     store.update({
-      identifier: 0,
+      url: 'main',
       insuredEvent: {
-        identifier: 0,
+        url: 'main',
         durationMax: 'P1Y-1D' // 1 year - 1 day
       },
       insurer: {
-        identifier: 0
+        url: 'main'
       }
       // offers: {
       //   data: []
@@ -62,9 +64,9 @@ describe('policy-markup-generator', function() {
     // console.log(container.firstChild.innerHTML);
     expect(container.firstChild.nextSibling.getAttribute('itemtype')).to.equal('http://schema.org/FinancialProduct');
 
-    const elemId = findPropertyElem(container, 'identifier');
+    const elemId = findPropertyElem(container, PRIMARY_KEY);
     expect(elemId).to.not.null;
-    expect(elemId.value).to.equal('0');
+    expect(elemId.value).to.equal('main');
     done();
   });
 
@@ -86,36 +88,36 @@ describe('policy-markup-generator', function() {
 
       // // console.log(elemItem.innerHTML);
 
-      const elemItemId = findPropertyElem(elemInsurants, 'identifier');
+      const elemItemId = findPropertyElem(elemInsurants, PRIMARY_KEY);
       expect(elemItemId).to.not.null;
-      expect(elemItemId.value).to.equal('5');
+      expect(elemItemId.value).to.equal('p5');
 
       done();
     });
 
     store.insertItem('insurants', {
-      identifier: 5,
+      url: 'p5',
       name: 'Jane'
     });
   });
 
   it('should removeItem of insurants', function(done) {
     store.insertItem('insurants', {
-      identifier: 5,
+      url: 'p5',
       name: 'Jane'
     });
 
     const elemInsurants = findPropertyElem(container, 'insurants');
     expect(elemInsurants).to.not.null;
 
-    const elemId = findPropertyElem(elemInsurants, 'identifier');
+    const elemId = findPropertyElem(elemInsurants, PRIMARY_KEY);
     expect(elemId).to.not.null;
 
     // TODO: a button to remove
-    store.removeItem('insurants', 5);
+    store.removeItem('insurants', 'p5');
 
     // TODO: why elemId not changed?
-    const elemNewId = findPropertyElem(elemInsurants, 'identifier');
+    const elemNewId = findPropertyElem(elemInsurants, PRIMARY_KEY);
 
     // console.log('elme', elemId);
 
@@ -125,7 +127,7 @@ describe('policy-markup-generator', function() {
 
   it('should update insurant', function(done) {
     store.insertItem('insurants', {
-      identifier: 7,
+      url: 'p7',
       name: 'Jane',
       age: 100
     });

@@ -24,6 +24,10 @@ module.exports = {
   update: function(elem, value) {
     const url = value;
 
+    if (!url) {
+      throw new Error('required_url: ' + elem.id);
+    }
+
     const urlText = url.replace(/^http:\/\//g, '')
           .replace(/^https:\/\//g, '')
           .replace(/\/$/g, '');

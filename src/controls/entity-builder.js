@@ -148,7 +148,7 @@ const findOrCreateElemSection = function(elemRow,
   // entity)
   const idSetting = entitySettings[PRIMARY_KEY];
   if (!idSetting) {
-    throw new Error('required_id_for: ' + elemSectionId);
+    throw new Error('required_id: ' + PRIMARY_KEY + ' for ' + elemSectionId);
   }
 
   const idPropType = idSetting.type; // 'Country' | 'Integer'

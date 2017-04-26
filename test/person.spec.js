@@ -22,14 +22,14 @@ describe('person-markup-generator', function() {
     container.id = 'root';
     document.body.appendChild(container);
 
-    store = new ComputedState(modelTemplate, 'identifier');
+    store = new ComputedState(modelTemplate, 'url');
 
     const rootLabel = document.createElement('h1');
     rootLabel.textContent = 'Person';
     container.appendChild(rootLabel);
 
     store.update({
-      identifier: 'asdf'
+      url: 'asdf'
     });
 
     entityBuilder(container,
@@ -96,13 +96,13 @@ describe('person-markup-generator', function() {
     store.subscribe(function(changedKeys, state) {
       expect(changedKeys).to.deep.equal(['memberships']);
       expect(state.memberships).to.deep.equal([{
-        identifier: 123,
+        url: 'm123',
         created: '2010-01-01',
-        cid: 'c123'
+        upperUrl: 'M123'
       }, {
-        identifier: 234,
+        url: 'm234',
         created: '2010-02-01',
-        cid: 'c234'
+        upperUrl: 'M234'
       }]);
 
       const membershipsElem = findPropertyElem(container, 'memberships');
@@ -125,45 +125,42 @@ describe('person-markup-generator', function() {
 
       // // console.log(entityElem.innerHTML);
 
-      const idElem = mainNode.querySelector('[itemprop=identifier]');
+      const idElem = mainNode.querySelector('[itemprop=url]');
       expect(idElem).to.not.null;
-      expect(idElem.value).to.equal('123');
+      expect(idElem.value).to.equal('m123');
 
       const createdElem = mainNode.querySelector('[itemprop=created]');
       expect(createdElem).to.not.null;
       expect(createdElem.value).to.equal('2010-01-01');
 
-      const cidElem = mainNode.querySelector('[itemprop=cid]');
+      const cidElem = mainNode.querySelector('[itemprop=upperUrl]');
       expect(cidElem).to.not.null;
-      expect(cidElem.textContent).to.equal('c123');
+      expect(cidElem.textContent).to.equal('M123');
 
       done();
     });
 
     store.update({
       memberships: [{
-        identifier: 123,
+        url: 'm123',
         created: '2010-01-01'
       }, {
-        identifier: 234,
+        url: 'm234',
         created: '2010-02-01'
       }]
     });
 
     // or:
-    // store.insertItem('memberships', {
-    //   identifier: 123,
-    //   created: '2010-01-01'
-    // });
+    // store.insertItem('memberships',
   });
 
   it('should update inner item', function (done) {
     store.update({
       memberships: [{
-        identifier: 123,
+        url: 'm123',
         created: '2010-01-01'
       }, {
-        identifier: 234,
+        url: 'm234',
         created: '2010-02-01'
       }]
     });
