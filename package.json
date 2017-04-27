@@ -4,7 +4,7 @@
   "description": "Yotra web application",
   "scripts": {
     "lint": "eslint --ext .js src/. test/.",
-    "lint-css": "stylelint src/css/*.css src/controls/*.css",
+    "lint-css": "stylelint src/css/*.css",
     "test": "mocha --opts mocha.opts test/*.spec.js",
     "css": "postcss --config postcss-config.json -o dist/index.css src/index.pre.css",
     "css-watch": "postcss --watch --config postcss-config.json -o dist/index.css src/index.pre.css",
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "computed-state": "github:ivanrave/computed-state",
+    "microdata-generator": "github:ivanrave/microdata-generator",
     "extend": "^3.0.0",
     "moment": "^2.17.1",
     "normalize.css": "^6.0.0",

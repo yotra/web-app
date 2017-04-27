@@ -1,6 +1,6 @@
 'use strict';
 
-const entityBuilder = require('./controls/entity-builder');
+const microdataGenerator = require('microdata-generator');
 const typeCheckers = require('../../vm-schema').types;
 
 const PRIMARY_KEY = 'url';
@@ -168,13 +168,13 @@ module.exports = function(rootContainer, store) {
   store.subscribe(function(changedKeys, stateFresh) {
     // console.log('changedKeys TODO', changedKeys);
 
-    entityBuilder(rootContainer,
-                  [],
-                  'FinancialProduct',
-                  stateFresh,
-                  typeCheckers,
-                  // isGlobalDisplayOnly
-                  false);
+    microdataGenerator(rootContainer,
+                       [],
+                       'FinancialProduct',
+                       stateFresh,
+                       typeCheckers,
+                       // isGlobalDisplayOnly
+                       false);
   });
 };
 
@@ -219,7 +219,7 @@ module.exports = function(rootContainer, store) {
 // Связь поля с обёрткой - позже
 // Стэйт будет равен нулл, если корневая сущность ещё не создана
 
-// const rootElemNew = entityBuilder({
+// const rootElemNew = microdataGenerator({
 //   parentPathLevels: [],
 //   entitySettings: stateFresh.__settings,
 //   entitySchema: 'Policy',

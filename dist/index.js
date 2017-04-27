@@ -4497,7 +4497,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // событие, например тур, путешествие, прокат, полёт и т.п.
         module.exports = {
-            identifier: { type: 'Integer', label: 'ID' },
+            url: { type: 'URLID', label: 'ID' },
 
             durationMax: {
                 type: 'Duration', // P1Y2M3D
@@ -4853,15 +4853,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var insurant = {};
         extend(insurant, person, {
             // override person.id (Integer)
-            identifier: {
-                type: 'Decade',
+            url: {
+                type: 'URLID',
                 label: 'ИД застрахованного'
             },
 
             orderNumber: {
                 type: 'Text',
                 label: 'Застрахованное лицо №',
-                computed: ['identifier', function (identifier) {
+                computed: ['url', function (identifier) {
                     return identifier + ''; // or id + 1 (for 0-based ids)
                 }]
             },
@@ -4892,15 +4892,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // место действия полиса: страна, группа стран
         module.exports = {
-            identifier: {
-                type: 'Country',
+            url: {
+                // TODO: type Country
+                type: 'URLID',
                 label: 'ИД'
             },
 
             name: {
                 type: 'Text',
                 label: 'Страна',
-                computed: ['identifier', function (identifier) {
+                computed: ['url', function (identifier) {
                     return typeCountry.allowed.filter(function (c) {
                         return c.id === identifier;
                     })[0].name;
@@ -4924,7 +4925,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             isDateVisaRequired: {
                 type: 'Boolean',
                 label: 'Требуется ли указание даты получения визы',
-                computed: ['identifier', function (identifier) {
+                computed: ['url', function (identifier) {
                     return identifier === 'estonia' || identifier === 'finland';
                 }]
             },
@@ -4942,8 +4943,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         'use strict';
 
         module.exports = {
-            identifier: {
-                type: 'Integer',
+            url: {
+                type: 'URLID',
                 label: 'ИД'
             },
 
@@ -4982,8 +4983,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         'use strict';
 
         module.exports = {
-            identifier: {
-                type: 'Integer',
+            url: {
+                type: 'URLID',
                 label: 'Идентификатор продукта'
             },
             companyId: {
@@ -5010,7 +5011,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             infoUrl: {
                 type: 'URL',
                 label: 'Адрес продукта',
-                computed: ['identifier', function (identifier) {
+                computed: ['url', function (identifier) {
                     if (identifier === null) {
                         return null;
                     }
@@ -5036,7 +5037,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         // http://schema.org/FinancialService
         module.exports = {
-            identifier: { type: 'Integer', label: 'ID' },
+            url: { type: 'URLID', label: 'ID' },
 
             name: {
                 type: 'Text',
@@ -5100,7 +5101,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insuredPlacesWarning: {
                 type: 'Text',
                 label: 'Валидация стран',
-                computed: ['identifier', 'insuredPlaces', function (identifier, insuredPlaces) {
+                computed: ['url', 'insuredPlaces', function (identifier, insuredPlaces) {
                     if (identifier === null) {
                         return null;
                     }
@@ -5116,7 +5117,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insuredEventWarning: {
                 type: 'Text',
                 label: 'Валидация дат поездки',
-                computed: ['identifier', 'insuredEvent', function (identifier, insuredEvent) {
+                computed: ['url', 'insuredEvent', function (identifier, insuredEvent) {
                     if (identifier === null || insuredEvent === null) {
                         return null;
                     }
@@ -5132,7 +5133,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             insurantsWarning: {
                 type: 'Text',
                 label: 'Валидация застрахованных лиц',
-                computed: ['identifier', 'insurants', function (identifier, insurants) {
+                computed: ['url', 'insurants', function (identifier, insurants) {
                     if (identifier === null) {
                         return null;
                     }
@@ -5158,7 +5159,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             calculableWarning: {
                 type: 'Text',
                 label: 'необходимо заполнить',
-                computed: ['identifier', 'insuredPlacesWarning', 'insurantsWarning', function (identifier, insuredPlacesWarning, insurantsWarning) {
+                computed: ['url', 'insuredPlacesWarning', 'insurantsWarning', function (identifier, insuredPlacesWarning, insurantsWarning) {
                     if (identifier === null) {
                         return null;
                     }
@@ -5178,7 +5179,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             isCalculable: {
                 type: 'Boolean',
                 label: 'Возможен ли расчёт?',
-                computed: ['identifier', 'insuredPlacesWarning', 'insuredEventWarning', 'insurantsWarning', function (identifier, w1, w2, w3) {
+                computed: ['url', 'insuredPlacesWarning', 'insuredEventWarning', 'insurantsWarning', function (identifier, w1, w2, w3) {
                     if (identifier === null || w1 === null || w2 === null || w3 === null) {
                         return null;
                     }
@@ -5205,7 +5206,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             },
 
             offersEndpoint: {
-                type: 'URL',
+                // URL must exist always (Search Engine rule)
+                // type URL replaced by simple Text
+                type: 'Text',
                 label: 'URL предложений',
                 computed: ['isCalculable', 'insuredEvent', function (isCalculable, tour) {
                     if (isCalculable === null || isCalculable === false || tour === null) {
@@ -6592,8 +6595,1078 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         module.exports = Setting;
     }, {}], 23: [function (require, module, exports) {
+        module.exports = require('./src/entity-builder');
+    }, { "./src/entity-builder": 33 }], 24: [function (require, module, exports) {
+        /** Pick any integer between min and max age */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'number';
+            elem.placeholder = '0-120';
+            return elem;
+        };
+    }, {}], 25: [function (require, module, exports) {
+        /** Boolean label */
+
+        'use strict';
+
+        module.exports = {
+            build: function () {
+                var elem = document.createElement('span');
+                elem.setAttribute('data-state', '');
+                return elem;
+            },
+            update: function (elem, value) {
+                elem.textContent = String(value);
+                elem.setAttribute('data-state', String(value));
+                // set to wrap
+                elem.parentNode.setAttribute('data-state', String(value));
+            }
+        };
+    }, {}], 26: [function (require, module, exports) {
+        /** Checkbox */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'checkbox';
+
+            setTimeout(function () {
+                var div = document.createElement('div');
+                div.appendChild(document.createElement('div'));
+                elem.parentNode.insertBefore(div, elem.nextSibling);
+            }, 0);
+
+            return elem;
+        };
+    }, {}], 27: [function (require, module, exports) {
+        /** Country input */
+
+        'use strict';
+
+        module.exports = function (typeChecker) {
+            var elem = document.createElement('select');
+            // elem.type = 'text';
+            // elem.placeholder = 'country id';
+
+            var emptyOption = document.createElement('option');
+            emptyOption.textContent = 'Select a country...';
+            emptyOption.value = '';
+            elem.appendChild(emptyOption);
+
+            typeChecker.allowed.forEach(function (c) {
+                var elemOption = document.createElement('option');
+                elemOption.value = c.id;
+                elemOption.textContent = c.name;
+                elemOption.label = c.name;
+                elem.appendChild(elemOption);
+            });
+
+            return elem;
+        };
+    }, {}], 28: [function (require, module, exports) {
+        /** Date as a string: YYYY-MM */
+
+        'use strict';
+
+        var convertIsoDate = function (isoDate) {
+            return isoDate.substring(0, 7);
+        };
+
+        module.exports = {
+            build: function () {
+                return document.createElement('span');
+            },
+            update: function (elem, value) {
+                if (value === null) {
+                    elem.removeAttribute('content');
+                    elem.textContent = '';
+                } else {
+                    elem.setAttribute('content', value);
+                    elem.textContent = convertIsoDate(value);
+                }
+            }
+        };
+    }, {}], 29: [function (require, module, exports) {
+        /** @module */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'date';
+            // elem.placeholder = 'dd.mm.yyyy';
+            // TODO: manual input later
+            // https://github.com/dbushell/Pikaday/issues/520
+            elem.readOnly = true;
+            // TODO: load min and max from other DOM elements
+            //    console.log('picker is created');
+            // };
+
+            return elem;
+        };
+    }, {}], 30: [function (require, module, exports) {
+        /** Pick any number between min and max */
+
+        'use strict';
+
+        module.exports = function (typeChecker) {
+            var elem = document.createElement('input');
+            elem.type = 'number';
+            elem.placeholder = typeChecker.min + ' - ' + typeChecker.max;
+            elem.min = typeChecker.min;
+            elem.max = typeChecker.max;
+            return elem;
+        };
+    }, {}], 31: [function (require, module, exports) {
+        /** String input */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'text';
+            elem.placeholder = 'duration';
+            // TODO: show picker like date: years, months, days number
+
+            return elem;
+        };
+    }, {}], 32: [function (require, module, exports) {
+        'use strict';
+
+        module.exports = {
+            build: function () {
+                return document.createElement('span');
+            },
+            update: function (elem, value) {
+                elem.innerHTML = '';
+                if (!value) {
+                    console.log('optional_email: ' + elem.id);
+                    return;
+                }
+
+                var a = document.createElement('a');
+                a.href = 'mailto:' + value;
+                a.textContent = value;
+                elem.appendChild(a);
+            }
+        };
+    }, {}], 33: [function (require, module, exports) {
+        /**
+         * Contains a list of simple inputs, according entity properties
+         * @module
+         */
+
+        'use strict';
+
+        var propFactory = require('./prop-factory');
+        var propSetter = require('./prop-setter');
+        var microdata = require('./helpers/microdata');
+        var propRow = require('./prop-row');
+
+        var entityListWrapper = require('./entity-list-wrapper');
+
+        var SEPAR = '__';
+
+        var PRIMARY_KEY = 'url';
+
+        var buildInputName = function (parentPathLevels, propName) {
+            var levels = parentPathLevels.concat(propName);
+
+            var str = levels[0];
+
+            for (var i = 1; i < levels.length; i += 1) {
+                str += '[' + levels[i] + ']';
+            }
+
+            return str;
+        };
+
+        var destroyEntityElem = function (elemRow, entityPathLevels) {
+            var allPathLevels = ['root'].concat(entityPathLevels);
+
+            var elemEntityId = allPathLevels.join(SEPAR) + '_content';
+
+            var elemEntity = elemRow.querySelector('#' + elemEntityId);
+
+            if (elemEntity) {
+                elemRow.removeChild(elemEntity);
+            }
+        };
+
+        /**
+         * Update a DOM element with current state of an entity.
+         * @param {Object} elemRow A DOM element (container) for an entity
+         * @param {String[]} entityPathLevels Base levels for an entity
+         *        eg: second membership in a group: [group, memberships, 2]
+         *        no path levels for a root element only.
+         * @param {String} entitySchema Schema.org itemtype, like 'Person'
+         * @param {Object} entity An object in computed-state format
+         *        https://github.com/ivanRave/computed-state
+         *        like 'student', 'person', 'thing', 'membership'
+         * @param {Object} typeCheckers Validators for all property types
+         * @param {Boolean} isGlobalDisplayOnly Read mode (no write mode)
+         * @returns {Object} Fulfilled DOM element for this entity
+         */
+        var buildEntityElem = function (elemRow, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly) {
+            if (!typeCheckers) {
+                throw new Error('required_typeCheckers');
+            }
+
+            var allPathLevels = ['root'].concat(entityPathLevels);
+
+            var elemEntityId = allPathLevels.join(SEPAR) + '_content';
+
+            // entityId can be a plain text or Number
+            // but can not be URL with slashes: /projects/123
+            var elemEntity = elemRow.querySelector('#' + elemEntityId);
+
+            if (!entity) {
+                throw new Error('required_entity');
+            }
+
+            if (!elemEntity) {
+                // Create an element with entity properties
+                // Append to a parent element
+                elemEntity = document.createElement('div');
+                elemEntity.id = elemEntityId;
+                // if (entityPathLevels.length > 0) {
+                //   // TODO: propName
+                //   microdata.markProperty(elemEntityContent, propName);
+                // }
+                microdata.markEntity(elemEntity, entitySchema);
+                elemRow.appendChild(elemEntity);
+                // } else {
+                //   // TODO: update all inner properties
+                //   throw new Error('not_realized_update');
+            }
+
+            // console.log('elemEntityContent', elemEntityContent);
+            // update or create
+            buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers, isGlobalDisplayOnly); // eslint-disable-line
+
+            return elemEntity;
+        };
+
+        var createElemInsertId = function (idPropType, typeChecker, pathLevels) {
+            var elemInsertId = propFactory.createInput(idPropType, typeChecker);
+            elemInsertId.setAttribute('data-entity-list-path', pathLevels.join('.'));
+            elemInsertId.setAttribute('data-action', 'insertItem');
+            return elemInsertId;
+        };
+
+        var findOrCreateElemSection = function (elemRow, elemSectionId, entitySettings, typeCheckers, pathLevels, isGlobalDisplayOnly) {
+            var elemExisting = elemRow.querySelector('#' + elemSectionId);
+
+            if (elemExisting) {
+                return elemExisting;
+            }
+
+            // TODO: change to UL or something listable
+            var elemCreated = document.createElement('div');
+            elemCreated.id = elemSectionId;
+            microdata.markEntityList(elemCreated);
+            elemRow.appendChild(elemCreated);
+
+            var idSetting = entitySettings[PRIMARY_KEY];
+            if (!idSetting) {
+                throw new Error('required_id: ' + PRIMARY_KEY + ' for ' + elemSectionId);
+            }
+
+            var idPropType = idSetting.type; // 'Country' | 'Integer'
+
+            var typeChecker = typeCheckers[idPropType];
+            if (!isGlobalDisplayOnly) {
+                var elemInsertId = createElemInsertId(idPropType, typeChecker, pathLevels);
+                // TODO: or in ItemList element, like [].push
+                elemRow.appendChild(elemInsertId);
+            }
+
+            // const elemInsert = document.createElement('button');
+            // elemInsert.type = 'button';
+            // elemInsert.setAttribute('data-action-type', 'insertItem');
+            // elemInsert.setAttribute('data-entity-list-path', pathLevels.join('.'));
+
+            return elemCreated;
+        };
+
+        /**
+         * It doesnt depends of property name of a parent entity
+         * @param {String[]} pathLevels Like ['university', 'students']
+         *        Last String must be plural (collection of entities)
+         * @param {Object} entitySettings A template for an item of this collection
+         * @param {String} entitySchema A schema for an item of this collection, like 'Person'
+         * @returns {Object} DOM element: list of items
+         */
+        var buildEntityListElem = function (elemRow, pathLevels, entitySchema, entitySettings, entityList, typeCheckers, isGlobalDisplayOnly) {
+            if (pathLevels.length < 1) {
+                throw new Error('required_path_levels_non_empty');
+            }
+
+            var allPathLevels = ['root'].concat(pathLevels);
+
+            var elemSectionId = allPathLevels.join(SEPAR) + '_content';
+
+            var elemSection = findOrCreateElemSection(elemRow, elemSectionId, entitySettings, typeCheckers, pathLevels, isGlobalDisplayOnly);
+
+            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY);
+
+            return elemSection;
+            // Update inner list
+
+            // TODO
+            // const itemInsertElem = buildItemInsertElem(pathLevels);
+            // sectionElem.appendChild(itemInsertElem);
+        };
+
+        /**
+         * Build an element for a property.
+         * Just an empty element without value: value can be changed dynamically.
+         * Other attributes cannot be changed dynamically (min, max, etc.) -
+         *   there are only entities and properties in our methodology.
+         * Other attributes are constants (can be changed by view layer)
+         */
+        var buildSimpleElem = function (elemRow, parentPathLevels, propName, propType, propValue, isDisplayOnly, typeCheckers) {
+            var allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
+
+            var propContentId = allPathLevels.join(SEPAR) + '_content';
+
+            var elemProp = elemRow.querySelector('#' + propContentId);
+
+            if (!elemProp) {
+                var typeChecker = typeCheckers[propType];
+
+                // a property is created, then - filled with data
+                if (isDisplayOnly) {
+                    elemProp = propFactory.createDisplay(propType, typeChecker);
+                } else {
+                    elemProp = propFactory.createInput(propType, typeChecker);
+                    elemProp.name = buildInputName(parentPathLevels, propName);
+                    elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
+                }
+
+                elemProp.id = propContentId;
+                elemRow.appendChild(elemProp);
+            }
+
+            if (isDisplayOnly) {
+                propSetter.setDisplayValue(elemProp, propValue);
+            } else {
+                propSetter.setInputValue(elemProp, propValue);
+            }
+
+            return elemProp;
+        };
+
+        var buildAnyElem = function (elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly) {
+            if (!propName || !propSetting) {
+                throw new Error('required_propName_propSetting');
+            }
+
+            if (!elemRow) {
+                throw new Error('required_elem_row');
+            }
+
+            var propType = propSetting.type;
+
+            if (!propType) {
+                throw new Error('required_propType');
+            }
+
+            var childEntitySettings = propSetting.refSettings;
+            // TODO: schema from inner entity
+            var childEntitySchema = propSetting.schema;
+
+            var pathLevels = parentPathLevels.concat(propName);
+
+            switch (propType) {
+                case microdata.ENTITY:
+                    if (!childEntitySettings) {
+                        throw new Error('required_ref_for_Item');
+                    }
+                    if (!childEntitySchema) {
+                        throw new Error('required_schema_for_Item: ' + propName);
+                    }
+
+                    // In an entity has been removed - destroy an element
+                    if (!propValue) {
+                        // console.warn('create_null_props', propName);
+                        destroyEntityElem(elemRow, pathLevels);
+                        return null;
+                    }
+
+                    // propValue = entity
+                    return buildEntityElem(elemRow, pathLevels, childEntitySchema, propValue, typeCheckers, isPropDisplayOnly);
+
+                // only root element without propName
+                // itemprop must be outside of scope
+                // <div itemprop="student" itemscope itemtype="Person">
+                // it's a logical error: inner components do not depend of outer
+                case microdata.ENTITY_LIST:
+                    // if no propVaule (entity) - use this settings to build
+                    //   the insertion form
+                    if (!childEntitySettings) {
+                        throw new Error('required_ref_for_ItemList');
+                    }
+                    if (!childEntitySchema) {
+                        throw new Error('required_schema_for_ItemList: ' + propName);
+                    }
+
+                    // propValue = [{ firstName: 'Jane' }]
+                    // propValue can be null (for non-existing entities)
+                    return buildEntityListElem(elemRow, pathLevels, childEntitySchema, childEntitySettings, propValue || [], typeCheckers, isPropDisplayOnly); // TODO: null array
+                default:
+                    return buildSimpleElem(elemRow, parentPathLevels, propName, propType, propValue, isPropDisplayOnly, typeCheckers);
+            }
+        };
+
+        // TODO: async objects
+        // 'firstName', ['student', 'person'], false, 'Text', 'Jane'
+        // 'created', ['memberships', 123], false, 'Date', '2010-01-01'
+
+        /**
+         * @param {Object} entityTemplate Like {firtsName: {type: 'Text'}}
+         * @param {String[]} parentPathLevels Like ['person', 'memberships']
+         * @param {Object} entity Like { firtsName: 'Jane' }
+         * @returns {Object[]} List of DOM elements
+         */
+        var buildElementsFromSettings = function (elemEntity, parentPathLevels, entity, typeCheckers, isGlobalDisplayOnly) {
+            if (!entity || !elemEntity) {
+                // entityElement can not exist without an entity
+                throw new Error('entity_and_elemEntity_must_exist');
+            }
+
+            var entitySettings = entity.__settings;
+
+            Object.keys(entitySettings).forEach(function (propName) {
+                // student['name']
+                var propSetting = entitySettings[propName];
+                var propValue = entity[propName];
+
+                if (propValue === undefined) {
+                    throw new Error('prop_can_not_be_undefined');
+                }
+
+                var propLabel = propSetting.label;
+                if (!propLabel) {
+                    throw new Error('required_label: ' + propName);
+                }
+
+                var isPropDisplayOnly = isGlobalDisplayOnly || !!propSetting.calculate || parentPathLevels.indexOf('data') >= 0 || propName === 'loading' || propName === 'error';
+
+                // TODO: root__
+                var allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
+
+                var propGlobalId = allPathLevels.join(SEPAR);
+
+                var elemRow = elemEntity.querySelector('#' + propGlobalId);
+
+                if (!elemRow) {
+                    // If no property - create a wrap + label + content
+                    // add it to the parent block
+                    // and update inner value
+                    elemRow = propRow(propGlobalId);
+                    elemRow.setAttribute('data-prop-row', propName);
+
+                    var elemLabel = document.createElement('label');
+                    elemLabel.id = propGlobalId + '_label';
+                    // if writable property, like <input>
+                    if (!isPropDisplayOnly) {
+                        elemLabel.htmlFor = propGlobalId + '_content';
+                    }
+
+                    elemLabel.textContent = propLabel;
+                    elemRow.appendChild(elemLabel); // <td>label</td>
+
+                    // Add to parent entity TODO: update
+                    elemEntity.appendChild(elemRow);
+                    // } else {
+                    //   throw new Error('not_realized_update_prop');
+                }
+
+                var anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
+
+                if (anyElem) {
+                    microdata.markProperty(anyElem, propName, propSetting.sameAsProperty);
+                }
+            });
+        };
+
+        // props.parentPathLevels,
+        // props.entitySettings,
+        // props.entitySchema,
+        // props.entity
+        module.exports = buildEntityElem;
+    }, { "./entity-list-wrapper": 34, "./helpers/microdata": 35, "./prop-factory": 39, "./prop-row": 40, "./prop-setter": 41 }], 34: [function (require, module, exports) {
+        'use strict';
+
+        // const microdata = require('./helpers/microdata');
+
+        var SEPAR = '__';
+
+        var microdata = require('./helpers/microdata');
+
+        module.exports = {
+            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
+                if (!elemSection) {
+                    throw new Error('required_elemSection');
+                }
+
+                // must be array
+                if (!entityList || Array.isArray(entityList) === false) {
+                    throw new Error('required_entityList_array');
+                }
+
+                var allPathLevels = ['root'].concat(pathLevels);
+
+                var ids = entityList.map(function (entity) {
+                    return allPathLevels.concat(entity[PRIMARY_KEY]).join(SEPAR) + '_content';
+                });
+
+                var currentElems = elemSection.children;
+
+                // delete excessive
+                for (var i = currentElems.length - 1; i >= 0; i -= 1) {
+                    var needElem = currentElems[i];
+
+                    if (ids.indexOf(needElem.id) < 0) {
+                        elemSection.removeChild(needElem);
+                    }
+                }
+
+                // update or insert
+                // TODO: index -> position
+                entityList.forEach(function (entity, index) {
+                    if (!entity) {
+                        throw new Error('required_entity');
+                    }
+
+                    var entityPathLevels = pathLevels.concat(entity[PRIMARY_KEY]);
+
+                    var elemEntity = buildEntityElem(elemSection, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly);
+
+                    microdata.markPropertyAsListItem(elemEntity, index + 1);
+
+                    if (isGlobalDisplayOnly) {
+                        return;
+                    }
+
+                    var btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
+
+                    if (btn) {
+                        return;
+                    }
+
+                    // TODO: if not exists
+                    var buttonRemoveItem = document.createElement('button');
+                    buttonRemoveItem.textContent = 'X';
+                    buttonRemoveItem.type = 'button';
+                    buttonRemoveItem.setAttribute('data-action', 'removeItem');
+                    var oidObject = {};
+                    oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
+
+                    buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
+                    buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
+                    elemEntity.appendChild(buttonRemoveItem);
+                });
+            }
+        };
+    }, { "./helpers/microdata": 35 }], 35: [function (require, module, exports) {
+        'use strict';
+
+        var helper = {
+            // constants
+            ENTITY: 'Item',
+            ENTITY_LIST: 'ItemList'
+        };
+
+        helper.markEntity = function (entityElem, schemaName) {
+            entityElem.setAttribute('itemscope', '');
+            entityElem.setAttribute('itemtype', 'http://schema.org/' + schemaName);
+        };
+
+        helper.markEntityList = function (elem) {
+            elem.setAttribute('itemscope', '');
+            elem.setAttribute('itemtype', 'http://schema.org/ItemList');
+        };
+
+        helper.markProperty = function (propertyElem, propertyName, sameAsPropertyName) {
+            // like 'url contentUrl' for images
+            var val = propertyName + (sameAsPropertyName ? ' ' + sameAsPropertyName : '');
+
+            propertyElem.setAttribute('itemprop', val);
+        };
+
+        // https://schema.org/ItemList
+        helper.markPropertyAsListItem = function (elem, position) {
+            helper.markProperty(elem, 'itemListElement');
+
+            // if 'position' not exists - insert it
+            var existingElem = elem.querySelector('[itemprop=position]');
+
+            if (existingElem) {
+                // just change the position (if the list order is changed)
+                existingElem.content = position;
+                return;
+            }
+
+            var positionElem = document.createElement('meta');
+            positionElem.setAttribute('itemprop', 'position');
+            positionElem.content = position;
+            elem.appendChild(positionElem);
+        };
+
+        module.exports = helper;
+    }, {}], 36: [function (require, module, exports) {
+        /**
+         * Image
+         * ImageObject: { id: url, width: 100, height: 200, alt: 'asdf' }
+         */
+
+        'use strict';
+
+        var parseImageMeta = function (imageMeta) {
+            var parts = imageMeta.split('|');
+
+            if (!parts[0]) {
+                throw new Error('required_imageMeta_src');
+            }
+
+            var result = {
+                src: parts[0]
+            };
+
+            for (var i = 1; i < parts.length; i += 1) {
+                var keyValue = parts[i].split('=');
+                result[keyValue[0]] = keyValue[1];
+            }
+
+            return result;
+        };
+
+        module.exports = {
+            build: function () {
+                return document.createElement('img');
+            },
+            update: function (elem, value) {
+                if (value === null) {
+                    throw new Error('image can not be null at this moment');
+                }
+
+                var imageMeta = parseImageMeta(value);
+
+                elem.src = imageMeta.src;
+                if (imageMeta.width) {
+                    elem.width = imageMeta.width;
+                }
+                if (imageMeta.height) {
+                    elem.height = imageMeta.height;
+                }
+                if (imageMeta.alt) {
+                    elem.alt = imageMeta.alt;
+                }
+            }
+        };
+    }, {}], 37: [function (require, module, exports) {
+        /** String label */
+
+        'use strict';
+
+        module.exports = function () {
+            return document.createElement('span');
+        };
+    }, {}], 38: [function (require, module, exports) {
+        /** Pick any number between min and max */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'number';
+            elem.placeholder = 'Any number';
+            return elem;
+        };
+    }, {}], 39: [function (require, module, exports) {
+        /**
+         * A component factory, like document.createElement
+         *
+         * Name convention for custom elements:
+         * - two or more words
+         * - separated by dash
+         * - lowercase
+         * - Latin characters
+         *
+         * Boolean-input can be a selector, radio, simple input, etc.
+         * it depends of design of a project
+         *
+         * @todo switch to custom elements after release
+         * @todo use <template> to clone instead building elems from scratch
+         * @module
+         */
+
+        'use strict';
+
+        // at this moment it's not a class
+        // will be converted when custom elements will be released
+        // browserify doesnt support dynamic requires
+
+        var BooleanDisplay = require('./boolean-display');
+        var TextDisplay = require('./text-display');
+        var TelephoneDisplay = require('./telephone-display');
+        var EmailDisplay = require('./email-display');
+        var NumberDisplay = require('./number-display');
+        var DateDisplay = require('./date-display');
+        var UrlDisplay = require('./url-display');
+        var UrlIdDisplay = require('./urlid-display');
+        var ImageDisplay = require('./image-display');
+
+        var BooleanInput = require('./boolean-input');
+        var TextInput = require('./text-input');
+        var NumberInput = require('./number-input');
+        var AgeInput = require('./age-input');
+        var DecadeInput = require('./decade-input');
+        var DateInput = require('./date-input');
+        var DurationInput = require('./duration-input');
+        var CountryInput = require('./country-input');
+
+        var calculateInput = function (tag) {
+            switch (tag) {
+                case 'boolean-input':
+                    return BooleanInput;
+                case 'text-input':
+                case 'url-input':
+                case 'urlid-input':
+                case 'telephone-input':
+                case 'email-input':
+                    return TextInput;
+                case 'number-input':
+                case 'integer-input':
+                case 'float-input':
+                    return NumberInput;
+                case 'age-input':
+                    return AgeInput;
+                case 'decade-input':
+                    return DecadeInput;
+                case 'date-input':
+                    return DateInput;
+                case 'duration-input':
+                    return DurationInput;
+                case 'country-input':
+                    return CountryInput;
+
+                default:
+                    throw new Error('tag_is_not_supported: ' + tag);
+            }
+        };
+
+        var calculateDisplay = function (tag) {
+            switch (tag) {
+                case 'boolean-display':
+                    return BooleanDisplay.build;
+                case 'telephone-display':
+                    return TelephoneDisplay.build;
+                case 'email-display':
+                    return EmailDisplay.build;
+                case 'text-display':
+                    return TextDisplay;
+                case 'url-display':
+                    return UrlDisplay.build;
+                case 'urlid-display':
+                    return UrlIdDisplay.build;
+                case 'image-display':
+                    return ImageDisplay.build;
+                case 'number-display':
+                case 'integer-display':
+                case 'float-display':
+                case 'age-display':
+                    return NumberDisplay;
+                case 'date-display':
+                    return DateDisplay.build;
+                // case 'duration-display':
+                //   return DurationDisplay;
+
+                default:
+                    throw new Error('tag_is_not_supported: ' + tag);
+            }
+        };
+
+        module.exports = {
+            createInput: function (propType, typeChecker) {
+                var tag = propType.toLowerCase() + '-input';
+
+                var elemClass = calculateInput(tag);
+
+                var elem = elemClass(typeChecker);
+
+                elem.setAttribute('data-schema-type', propType);
+
+                // use classes instead tags, while no custom elements
+                elem.className = tag;
+                return elem;
+            },
+            createDisplay: function (propType, typeChecker) {
+                var tag = propType.toLowerCase() + '-display';
+
+                var elemClass = calculateDisplay(tag);
+
+                var elem = elemClass(typeChecker);
+
+                elem.setAttribute('data-schema-type', propType);
+
+                // use classes instead tags, while no custom elements
+                elem.className = tag;
+                return elem;
+            }
+        };
+    }, { "./age-input": 24, "./boolean-display": 25, "./boolean-input": 26, "./country-input": 27, "./date-display": 28, "./date-input": 29, "./decade-input": 30, "./duration-input": 31, "./email-display": 32, "./image-display": 36, "./number-display": 37, "./number-input": 38, "./telephone-display": 42, "./text-display": 43, "./text-input": 44, "./url-display": 45, "./urlid-display": 46 }], 40: [function (require, module, exports) {
+        /**
+         * A property wrapper:
+         * - an element with property name
+         * - an element with property value
+         */
+
+        'use strict';
+
+        module.exports = function (rowId) {
+            var row = document.createElement('fieldset');
+            row.id = rowId;
+            row.className = 'prop-row';
+            return row;
+        };
+    }, {}], 41: [function (require, module, exports) {
+        /**
+         * Set property value: input or display
+         */
+
+        'use strict';
+
+        var DateDisplay = require('./date-display');
+        var UrlDisplay = require('./url-display');
+        var UrlIdDisplay = require('./urlid-display');
+        var TelephoneDisplay = require('./telephone-display');
+        var EmailDisplay = require('./email-display');
+        var ImageDisplay = require('./image-display');
+        var BooleanDisplay = require('./boolean-display');
+
+        var reselectOptions = function (elem, value) {
+            var options = elem.children;
+            for (var i = options.length - 1; i >= 0; i -= 1) {
+                var needOption = options[i];
+                // setAttribute for static html
+                if (needOption.value === value) {
+                    needOption.setAttribute('selected', 'selected');
+                } else {
+                    needOption.removeAttribute('selected');
+                }
+            }
+        };
+
+        /**
+         * Input.value setter
+         * Convert source type to input type (text, checkbox, date)
+         * value - for inputs
+         * textContent - for readable properties
+         * Polyfill for elem.setTypedValue
+         */
+        var setInputValue = function (elemInput, value) {
+            // no-param-reassign
+            var elem = elemInput;
+
+            if (value === undefined) {
+                throw new Error('value_can_not_be_undefined');
+            }
+
+            switch (elem.type) {
+                case 'checkbox':
+                    elem.checked = value; // null or false or true
+                    if (value === true) {
+                        elem.setAttribute('checked', 'checked');
+                        // default value in some browsers
+                        elem.setAttribute('value', 'on');
+                    } else {
+                        elem.removeAttribute('checked');
+                        elem.removeAttribute('value');
+                    }
+                    break;
+                case 'select-one':
+                    // Attribute value not allowed on element select at this point
+                    elem.value = value === null ? '' : value;
+                    reselectOptions(elem, value);
+                    break;
+                default:
+                    elem.value = value === null ? '' : value;
+                    if (value !== null) {
+                        elem.setAttribute('value', value);
+                    } else {
+                        elem.removeAttribute('value');
+                    }
+            }
+
+            // debugging
+            elem.title = String(value);
+        };
+
+        var setDisplayValue = function (elemDisplay, value) {
+            var elem = elemDisplay;
+
+            if (value === undefined) {
+                throw new Error('value_can_not_be_undefined');
+            }
+
+            var schemaType = elem.getAttribute('data-schema-type');
+
+            if (!schemaType) {
+                throw new Error('required_data-schema-type');
+            }
+
+            switch (schemaType) {
+                case 'URL':
+                    UrlDisplay.update(elem, value);
+                    return;
+                case 'URLID':
+                    UrlIdDisplay.update(elem, value);
+                    return;
+                case 'Telephone':
+                    TelephoneDisplay.update(elem, value);
+                    return;
+                case 'Email':
+                    EmailDisplay.update(elem, value);
+                    return;
+                case 'Image':
+                    ImageDisplay.update(elem, value);
+                    return;
+                case 'Boolean':
+                    BooleanDisplay.update(elem, value);
+                    return;
+                case 'Date':
+                    DateDisplay.update(elem, value);
+                    return;
+                default:
+                    elem.textContent = value === null ? '' : value + '';
+                    // TODO debugging
+                    elem.title = String(value);
+            }
+        };
+
+        module.exports = {
+            setInputValue: setInputValue,
+            setDisplayValue: setDisplayValue
+        };
+    }, { "./boolean-display": 25, "./date-display": 28, "./email-display": 32, "./image-display": 36, "./telephone-display": 42, "./url-display": 45, "./urlid-display": 46 }], 42: [function (require, module, exports) {
+        /**
+         * Telephone number
+         * LocalBusiness.telephone
+         * optional property
+         * If telephone = null:
+         * - input: empty field
+         * - display:
+         *   - remove the element
+         *   - write: 'no phone' (throug view layer: css 'content') - it is better, if a user knows, that's no phone number
+         * ```<span itemprop="telephone"></span>```
+         * https://tools.ietf.org/html/rfc3966#section-6
+         * <a href="tel:+1-555-438-3732">1-555-IETF-RFC</a>.
+         *
+         * Bad value tel:+7 xxx xx-xxx-xx for attribute href on element a: Illegal character in scheme data: space is not allowed.
+         */
+
+        'use strict';
+
+        module.exports = {
+            build: function () {
+                return document.createElement('span');
+            },
+            update: function (elem, value) {
+                elem.innerHTML = '';
+                if (!value) {
+                    console.log('optional_telephone: ' + elem.id);
+                    return;
+                }
+
+                var a = document.createElement('a');
+                a.href = 'tel:' + value.replace(/\s/g, '');
+                a.textContent = value;
+                elem.appendChild(a);
+            }
+        };
+    }, {}], 43: [function (require, module, exports) {
+        'use strict';
+
+        module.exports = function () {
+            return document.createElement('span');
+        };
+    }, {}], 44: [function (require, module, exports) {
+        /** String input */
+
+        'use strict';
+
+        module.exports = function () {
+            var elem = document.createElement('input');
+            elem.type = 'text';
+            elem.placeholder = 'text';
+            return elem;
+        };
+    }, {}], 45: [function (require, module, exports) {
+        'use strict';
+
+        // siteUrl=http://asdfasdf.asdf/123|superSite
+        // const parseUrlMeta = function(urlMeta) {
+        //   const parts = urlMeta.split('|');
+
+        //   if (!parts[0]) {
+        //     throw new Error('required_imageMeta_src');
+        //   }
+
+        //   const result = {
+        //     href: parts[0]
+        //   };
+
+        //   if (parts[1]) { result.textContent = parts[1]; }
+
+        //   return result;
+        // };
+
+        module.exports = {
+            build: function () {
+                return document.createElement('a');
+            },
+            update: function (elem, value) {
+                var url = value;
+
+                if (!url) {
+                    throw new Error('required_url: ' + elem.id);
+                }
+
+                var urlText = url.replace(/^http:\/\//g, '').replace(/^https:\/\//g, '').replace(/\/$/g, '');
+
+                elem.href = url;
+                elem.textContent = urlText;
+            }
+        };
+    }, {}], 46: [function (require, module, exports) {
+        'use strict';
+
+        module.exports = {
+            build: function () {
+                return document.createElement('a');
+            },
+            update: function (elem, value) {
+                var urlid = value;
+
+                if (!urlid) {
+                    throw new Error('required_url: ' + elem.id);
+                }
+
+                // TODO: add a main host (calculate by js)
+                elem.href = '/' + urlid;
+                elem.textContent = '/' + urlid;
+            }
+        };
+    }, {}], 47: [function (require, module, exports) {
         arguments[4][4][0].apply(exports, arguments);
-    }, { "dup": 4 }], 24: [function (require, module, exports) {
+    }, { "dup": 4 }], 48: [function (require, module, exports) {
         /*!
          * Pikaday
          *
@@ -7683,979 +8756,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             return Pikaday;
         });
-    }, { "moment": 23 }], 25: [function (require, module, exports) {
-        /** Pick any integer between min and max age */
-
-        'use strict';
-
-        /**
-         * @param {Number} props.value Number or null
-         */
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'number';
-            elem.placeholder = 'лет';
-            return elem;
-        };
-    }, {}], 26: [function (require, module, exports) {
-        /** Boolean label */
-
-        'use strict';
-
-        module.exports = function () {
-            var elem = document.createElement('span');
-            elem.setAttribute('data-state', '');
-            return elem;
-        };
-    }, {}], 27: [function (require, module, exports) {
-        /** Checkbox */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'checkbox';
-
-            setTimeout(function () {
-                var div = doc.createElement('div');
-                div.appendChild(doc.createElement('div'));
-                elem.parentNode.insertBefore(div, elem.nextSibling);
-            }, 0);
-
-            return elem;
-        };
-    }, {}], 28: [function (require, module, exports) {
-        /**
-         * Set property value: input or display
-         */
-
-        'use strict';
-
-        var reselectOptions = function (elem, value) {
-            var options = elem.children;
-            for (var i = options.length - 1; i >= 0; i -= 1) {
-                var needOption = options[i];
-                // setAttribute for static html
-                if (needOption.value === value) {
-                    needOption.setAttribute('selected', 'selected');
-                } else {
-                    needOption.removeAttribute('selected');
-                }
-            }
-        };
-
-        /**
-         * Установка значения элемента
-         * Преобразование исходного типа в тип элемента (строка или чекбокс)
-         * value - for inputs
-         * textContent - for readable properties
-         * По сути является полифиллом для elem.setTypedValue -
-         *   установкой типизированного значения (не строки) в элемент
-         */
-        var setInputValue = function (elemInput, value) {
-            // no-param-reassign
-            var elem = elemInput;
-
-            if (value === undefined) {
-                throw new Error('value_can_not_be_undefined');
-            }
-
-            switch (elem.type) {
-                case 'checkbox':
-                    elem.checked = value; // null or false or true
-                    if (value === true) {
-                        elem.setAttribute('checked', 'checked');
-                        // default value in some browsers
-                        elem.setAttribute('value', 'on');
-                    } else {
-                        elem.removeAttribute('checked');
-                        elem.removeAttribute('value');
-                    }
-                    break;
-                case 'select-one':
-                    // Attribute value not allowed on element select at this point
-                    elem.value = value === null ? '' : value;
-                    reselectOptions(elem, value);
-                    break;
-                default:
-                    elem.value = value === null ? '' : value;
-                    if (value !== null) {
-                        elem.setAttribute('value', value);
-                    } else {
-                        elem.removeAttribute('value');
-                    }
-            }
-
-            // debugging
-            elem.title = String(value);
-        };
-
-        var parseImageMeta = function (imageMeta) {
-            var parts = imageMeta.split('|');
-
-            if (!parts[0]) {
-                throw new Error('required_imageMeta_src');
-            }
-
-            var result = {
-                src: parts[0]
-            };
-
-            for (var i = 1; i < parts.length; i += 1) {
-                var keyValue = parts[i].split('=');
-                result[keyValue[0]] = keyValue[1];
-            }
-
-            return result;
-        };
-
-        var setDisplayValue = function (elemDisplay, value) {
-            var elem = elemDisplay;
-
-            if (value === undefined) {
-                throw new Error('value_can_not_be_undefined');
-            }
-
-            if (elem.tagName === 'A') {
-                elem.href = value || '';
-                elem.textContent = value || '';
-            } else if (elem.tagName === 'IMG') {
-                if (value === null) {
-                    throw new Error('image can not be null at this moment');
-                }
-                var imageMeta = parseImageMeta(value);
-                // parse Image string
-
-                elem.src = imageMeta.src;
-                if (imageMeta.width) {
-                    elem.width = imageMeta.width;
-                }
-                if (imageMeta.height) {
-                    elem.height = imageMeta.height;
-                }
-                if (imageMeta.alt) {
-                    elem.alt = imageMeta.alt;
-                }
-            } else if (elem.hasAttribute('data-state')) {
-                elem.textContent = String(value);
-                elem.setAttribute('data-state', String(value));
-                // set to wrap
-                elem.parentNode.setAttribute('data-state', String(value));
-            } else {
-                elem.textContent = value === null ? '' : value + '';
-                // TODO debugging
-                elem.title = String(value);
-            }
-        };
-
-        module.exports = {
-            setInputValue: setInputValue,
-            setDisplayValue: setDisplayValue
-        };
-
-        /**
-         * HTML контрол при каждом событии генерирует нужные данные
-         * Например <input type="number" class="integer-input />
-         * является по сути <integer-input />
-         * который на выходе должен выдавать целое число,
-         * а также выдавать базовую ошибку, если введено нецелое число или строка
-         * Изначально элемент содержит только базовую логику, объявленную браузером, например проверка чисел, дат, а также генерация событий. То есть HTML разметка уже сама по себе содержит логику (без дополнительных скриптов)
-         * Данный полифилл добавляет более гибкую логику элементам ввода.
-         *
-         * Обновление также может быть и по кнопке UPDATE - явный вызов
-         * - слушать событие клик на соответствующих кнопках
-         */
-
-        /**
-         * Событие вставки новых записей.
-         * Три вида кнопок: обновление, удаление, добавление
-         * - события клик на соответствующих кнопках
-         * В итоге инициируется новое сообщение
-         * - название сущности (пути)
-         * - новый элемент (созданный или выбранный)
-         */
-        // const registerInsert = function(rootElem) {
-        //   rootElem.addEventListener('click', function(e) {
-        //     const elem = e.target;
-
-        //     // <form new-record></form>
-        //     // `<button data-method="insert-item"
-        //     //          data-entity="policy.countries"
-        //     //          data-entity-form="some-form-of-new-record"
-        //     // `;
-
-        //     // `<button data-method="remove-item"
-        //     //          data-entity="policy.countries"
-        //     //          data-entity-id="usa"
-        //     // `;
-
-        //     const event = new CustomEvent('insertItem', {
-        //       detail: result,
-        //       bubbles: true
-        //     });
-
-        //     elem.dispatchEvent(event);
-        //   });
-        // };
-    }, {}], 29: [function (require, module, exports) {
-        /** Country input */
-
-        'use strict';
-
-        module.exports = function (props, doc, typeChecker) {
-            var elem = document.createElement('select');
-            // elem.type = 'text';
-            // elem.placeholder = 'country id';
-
-            var emptyOption = document.createElement('option');
-            emptyOption.textContent = 'Выберите страну...';
-            emptyOption.value = '';
-            elem.appendChild(emptyOption);
-
-            typeChecker.allowed.forEach(function (c) {
-                var elemOption = document.createElement('option');
-                elemOption.value = c.id;
-                elemOption.textContent = c.name;
-                elemOption.label = c.name;
-                elem.appendChild(elemOption);
-            });
-
-            return elem;
-        };
-    }, {}], 30: [function (require, module, exports) {
-        /** Date as GOST string */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('span');
-            return elem;
-        };
-    }, {}], 31: [function (require, module, exports) {
-        /** @module */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'date';
-            // elem.placeholder = 'dd.mm.yyyy';
-            // TODO: manual input later
-            // https://github.com/dbushell/Pikaday/issues/520
-            elem.readOnly = true;
-            // TODO: load min and max from other DOM elements
-            //    console.log('picker is created');
-            // };
-
-            return elem;
-        };
-    }, {}], 32: [function (require, module, exports) {
-        /** Pick any number between min and max */
-
-        'use strict';
-
-        module.exports = function (props, doc, typeChecker) {
-            var elem = document.createElement('input');
-            elem.type = 'number';
-            elem.placeholder = 'От ' + typeChecker.min + ' до ' + typeChecker.max;
-            elem.min = typeChecker.min;
-            elem.max = typeChecker.max;
-            return elem;
-        };
-    }, {}], 33: [function (require, module, exports) {
-        /** String input */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'text';
-            elem.placeholder = 'duration';
-            // TODO: show picker like date: years, months, days number
-
-            return elem;
-        };
-    }, {}], 34: [function (require, module, exports) {
-        /**
-         * Contains a list of simple inputs, according entity properties
-         * @module
-         */
-
-        'use strict';
-
-        var propFactory = require('./prop-factory');
-        var controlsSetter = require('./controls-setter');
-        var microdata = require('./helpers/microdata');
-        var propRow = require('./prop-row');
-
-        var entityListWrapper = require('./entity-list-wrapper');
-
-        var SEPAR = '__';
-
-        var PRIMARY_KEY = 'identifier';
-
-        var buildInputName = function (parentPathLevels, propName) {
-            var levels = parentPathLevels.concat(propName);
-
-            var str = levels[0];
-
-            for (var i = 1; i < levels.length; i += 1) {
-                str += '[' + levels[i] + ']';
-            }
-
-            return str;
-        };
-
-        var destroyEntityElem = function (elemRow, entityPathLevels) {
-            var allPathLevels = ['root'].concat(entityPathLevels);
-
-            var elemEntityId = allPathLevels.join(SEPAR) + '_content';
-
-            var elemEntity = elemRow.querySelector('#' + elemEntityId);
-
-            if (elemEntity) {
-                elemRow.removeChild(elemEntity);
-            }
-        };
-
-        /**
-         * Entity, like 'student', 'person', 'thing', 'membership'
-         * @param {String} propName Name of a property of a parent entity,
-         *        eg: 'group.captain = {}' null only for root element
-         *        'item' if the parent is ItemList
-         * @param {String[]} entityPathLevels
-         *        eg: second membership in a group: [group, memberships, 2]
-         *        no path levels only for a root element
-         * @param {Object} entityTemplate { firstName: 'bar' }
-         * @param {String} entitySchema eg: 'Person', 'Thing', 'Membership'
-         * @param {Object} defaultValues { firstName: 'Jane', ... } for this entity
-         * @returns {Object} DOM element for this entity
-         */
-        var buildEntityElem = function (elemRow, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly) {
-            if (!typeCheckers) {
-                throw new Error('required_typeCheckers');
-            }
-
-            // Если элемент уже существует, его надо обновить, а не строить заново
-            // Передавать родительский компонент
-            // По нему определять существование и вставлять в него же
-
-            var allPathLevels = ['root'].concat(entityPathLevels);
-
-            var elemEntityId = allPathLevels.join(SEPAR) + '_content';
-
-            // // TODO: find from parentElem (not from document)
-            var elemEntity = elemRow.querySelector('#' + elemEntityId);
-
-            if (!entity) {
-                throw new Error('required_entity');
-            }
-
-            if (!elemEntity) {
-                // Создать новый элемент со свойствами
-                // Вставить в parentElem
-                // По идее каждое обновление хранилища должно полностью перестраивать элемент сущности и встраивать в тело документа (заменять)
-                elemEntity = document.createElement('div');
-                elemEntity.id = elemEntityId;
-                // if (entityPathLevels.length > 0) {
-                //   // TODO: propName
-                //   microdata.markProperty(elemEntityContent, propName);
-                // }
-                microdata.markEntity(elemEntity, entitySchema);
-                elemRow.appendChild(elemEntity);
-                // } else {
-                //   // TODO: обновить все внутренние свойства
-                //   throw new Error('not_realized_update');
-            }
-
-            // console.log('elemEntityContent', elemEntityContent);
-            // update or create
-            buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers, isGlobalDisplayOnly); // eslint-disable-line
-
-            return elemEntity;
-        };
-
-        var createElemInsertId = function (idPropType, typeChecker, pathLevels) {
-            var elemInsertId = propFactory.createInput(idPropType, typeChecker);
-            elemInsertId.setAttribute('data-entity-list-path', pathLevels.join('.'));
-            elemInsertId.setAttribute('data-action', 'insertItem');
-            return elemInsertId;
-        };
-
-        var findOrCreateElemSection = function (elemRow, elemSectionId, entitySettings, typeCheckers, pathLevels, isGlobalDisplayOnly) {
-            var elemExisting = elemRow.querySelector('#' + elemSectionId);
-
-            if (elemExisting) {
-                return elemExisting;
-            }
-
-            // TODO: change to UL or something listable
-            var elemCreated = document.createElement('div');
-            elemCreated.id = elemSectionId;
-            microdata.markEntity(elemCreated, 'ItemList');
-            elemRow.appendChild(elemCreated);
-
-            // id can be calculated during insertion
-            // or on the client (countryId)
-            // пользователь указывает ид, имя, возраст
-            // данные ассоциативной сущности и самой ассоциации
-            // ассоциативная сущность должна существовать в отдельности
-            // от текущей сущности
-            // данные ассоциации указываются вручную
-
-            // const formInsertion = document.createElement('div');
-            // это не обновляемая сущность, а вставляемая (без событий и вычисляемых полей)
-            // вставляемая сущность также может содержать внутренние сущности:
-            // нужна атомарная операция вставки - только записываемые частные свойства: ид и т.п.
-            // некоторые сущности требуют обязательных полей (но это не точно)
-            // например isFixed не может быть null
-            // buildEntityElem(formInsertion,
-            // entityPathLevels,
-            // entitySchema,
-            // entity)
-            var idSetting = entitySettings[PRIMARY_KEY];
-            if (!idSetting) {
-                throw new Error('required_id_for: ' + elemSectionId);
-            }
-
-            var idPropType = idSetting.type; // 'Country' | 'Integer'
-
-            var typeChecker = typeCheckers[idPropType];
-            if (!isGlobalDisplayOnly) {
-                var elemInsertId = createElemInsertId(idPropType, typeChecker, pathLevels);
-                // TODO: or in ItemList element, like [].push
-                elemRow.appendChild(elemInsertId);
-            }
-
-            // const elemInsert = document.createElement('button');
-            // elemInsert.type = 'button';
-            // elemInsert.setAttribute('data-action-type', 'insertItem');
-            // elemInsert.setAttribute('data-entity-list-path', pathLevels.join('.'));
-            // добавить страну, добавить туриста
-            // Кнопка добавляет пустую сущность (с авто ид), которая потом заполняется обновлениями
-            // Как ИД сгенерировать? Нулевой нельзя добавить
-            // По кол-ву предыдущих записей
-            // elemInsert.textContent = 'Add';
-
-            /**
-               По нажатию на кнопку отображается форма (всплывающее окно)
-               - выбор страны
-               - выбор сохранённого туриста (добавление нового)
-            */
-            // elemRow.appendChild(elemInsert);
-            return elemCreated;
-        };
-
-        /**
-         * It doesnt depends of property name of a parent entity
-         * @param {String[]} pathLevels Like ['university', 'students']
-         *        Last String must be plural (collection of entities)
-         * @param {Object} entitySettings A template for an item of this collection
-         * @param {String} entitySchema A schema for an item of this collection, like 'Person'
-         * @returns {Object} DOM element: list of items
-         */
-        var buildEntityListElem = function (elemRow, pathLevels, entitySchema, entitySettings, entityList, typeCheckers, isGlobalDisplayOnly) {
-            if (pathLevels.length < 1) {
-                throw new Error('required_path_levels_non_empty');
-            }
-
-            var allPathLevels = ['root'].concat(pathLevels);
-
-            var elemSectionId = allPathLevels.join(SEPAR) + '_content';
-
-            var elemSection = findOrCreateElemSection(elemRow, elemSectionId, entitySettings, typeCheckers, pathLevels, isGlobalDisplayOnly);
-
-            entityListWrapper.updateItems(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY);
-
-            return elemSection;
-            // Update inner list
-
-            // TODO
-            // const itemInsertElem = buildItemInsertElem(pathLevels);
-            // sectionElem.appendChild(itemInsertElem);
-        };
-
-        // Создаётся элемент свойства
-        // Отделение создания элемента от установки значения
-        // Так как значение может меняться
-        // Другие аттрибуты также могут меняться, например минмакс
-        // Но в проекте всё делится только на сущность и его свойства
-        // Обновление свойства - обновляет только значение в соответствующем элементе. Все остальные аттрибуты - константы. Поэтому и нет динамических мин и макс (только статика или хак)
-        var buildSimpleElem = function (elemRow, parentPathLevels, propName, propType, propValue, isDisplayOnly, typeCheckers) {
-            var allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
-
-            var propContentId = allPathLevels.join(SEPAR) + '_content';
-
-            var elemProp = elemRow.querySelector('#' + propContentId);
-
-            if (!elemProp) {
-                var typeChecker = typeCheckers[propType];
-
-                if (isDisplayOnly) {
-                    elemProp = propFactory.createDisplay(propType, typeChecker);
-                } else {
-                    elemProp = propFactory.createInput(propType, typeChecker);
-                    elemProp.name = buildInputName(parentPathLevels, propName);
-                    elemProp.setAttribute('data-entity-path', parentPathLevels.join('.') || 'root');
-                }
-
-                elemProp.id = propContentId;
-                elemRow.appendChild(elemProp);
-            }
-
-            if (isDisplayOnly) {
-                controlsSetter.setDisplayValue(elemProp, propValue);
-            } else {
-                controlsSetter.setInputValue(elemProp, propValue);
-            }
-
-            return elemProp;
-        };
-
-        var buildAnyElem = function (elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly) {
-            if (!propName || !propSetting) {
-                throw new Error('required_propName_propSetting');
-            }
-
-            if (!elemRow) {
-                throw new Error('required_elem_row');
-            }
-
-            var propType = propSetting.type;
-
-            if (!propType) {
-                throw new Error('required_propType');
-            }
-
-            var childEntitySettings = propSetting.refSettings;
-            // TODO: schema from inner entity
-            var childEntitySchema = propSetting.schema;
-
-            var pathLevels = parentPathLevels.concat(propName);
-
-            switch (propType) {
-                case 'Item':
-                    if (!childEntitySettings) {
-                        throw new Error('required_ref_for_Item');
-                    }
-                    if (!childEntitySchema) {
-                        throw new Error('required_schema_for_Item: ' + propName);
-                    }
-
-                    // Если сущность была удалена, тогда удалить соотв элемент
-                    if (!propValue) {
-                        // console.warn('create_null_props', propName);
-                        destroyEntityElem(elemRow, pathLevels);
-                        return null;
-                    }
-
-                    // propValue = entity
-                    return buildEntityElem(elemRow, pathLevels, childEntitySchema, propValue, typeCheckers, isPropDisplayOnly);
-
-                // only root element without propName
-                // itemprop must be outside of scope
-                // <div itemprop="student" itemscope itemtype="Person">
-                // it's a logical error: inner components do not depend of outer
-                case 'ItemList':
-                    // if no propVaule (entity) - use this settings to build
-                    //   the insertion form
-                    if (!childEntitySettings) {
-                        throw new Error('required_ref_for_ItemList');
-                    }
-                    if (!childEntitySchema) {
-                        throw new Error('required_schema_for_ItemList: ' + propName);
-                    }
-
-                    // propValue = [{ firstName: 'Jane' }]
-                    // propValue can be null (for non-existing entities)
-                    return buildEntityListElem(elemRow, pathLevels, childEntitySchema, childEntitySettings, propValue || [], typeCheckers, isPropDisplayOnly); // TODO: null array
-                default:
-                    return buildSimpleElem(elemRow, parentPathLevels, propName, propType, propValue, isPropDisplayOnly, typeCheckers);
-            }
-        };
-
-        // TODO: async objects
-        // 'firstName', ['student', 'person'], false, 'Text', 'Jane'
-        // 'created', ['memberships', 123], false, 'Date', '2010-01-01'
-
-        /**
-         * @param {Object} entityTemplate Like {firtsName: {type: 'Text'}}
-         * @param {String[]} parentPathLevels Like ['person', 'memberships']
-         * @param {Object} entity Like { firtsName: 'Jane' }
-         * @returns {Object[]} List of DOM elements
-         */
-        var buildElementsFromSettings = function (elemEntity, parentPathLevels, entity, typeCheckers, isGlobalDisplayOnly) {
-            if (!entity || !elemEntity) {
-                // entityElement can not exist without an entity
-                throw new Error('entity_and_elemEntity_must_exist');
-            }
-
-            var entitySettings = entity.__settings;
-
-            Object.keys(entitySettings).forEach(function (propName) {
-                // student['name']
-                var propSetting = entitySettings[propName];
-                var propValue = entity[propName];
-
-                if (propValue === undefined) {
-                    throw new Error('prop_can_not_be_undefined');
-                }
-
-                var propLabel = propSetting.label;
-                if (!propLabel) {
-                    throw new Error('required_label: ' + propName);
-                }
-
-                var isPropDisplayOnly = isGlobalDisplayOnly || !!propSetting.calculate || parentPathLevels.indexOf('data') >= 0 || propName === 'loading' || propName === 'error';
-
-                // TODO: root__
-                var allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
-
-                var propGlobalId = allPathLevels.join(SEPAR);
-
-                var elemRow = elemEntity.querySelector('#' + propGlobalId);
-
-                if (!elemRow) {
-                    // Если свойства не существует - создаётся wrap + label + content
-                    // И добавляется в родительский блок
-                    // А затем обновляется значение элемента
-                    elemRow = propRow(propGlobalId);
-                    elemRow.setAttribute('data-prop-row', propName);
-
-                    var elemLabel = document.createElement('label');
-                    elemLabel.id = propGlobalId + '_label';
-                    // if writable property, like <input>
-                    if (!isPropDisplayOnly) {
-                        elemLabel.htmlFor = propGlobalId + '_content';
-                    }
-
-                    elemLabel.textContent = propLabel;
-                    elemRow.appendChild(elemLabel); // <td>label</td>
-
-                    // Add to parent entity TODO: update
-                    elemEntity.appendChild(elemRow);
-                    // } else {
-                    //   throw new Error('not_realized_update_prop');
-                }
-
-                var anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
-
-                if (anyElem) {
-                    microdata.markProperty(anyElem, propName, propSetting.sameAsProperty);
-                }
-            });
-        };
-
-        // props.parentPathLevels,
-        // props.entitySettings,
-        // props.entitySchema,
-        // props.entity
-        module.exports = buildEntityElem;
-
-        //   // foreach props - create input, append to div
-        //   // 'simple' - input
-        //   // 'Item': again this element with different props
-        //   // 'ItemList': new container with this elements
-        // };
-
-
-        // freshList (or ids)
-        // const buildItemInsertElem = function(pathLevels) {
-        //   // TODO: load foreignList from store (or url)
-        //   const foreignList = [{
-        //     id: 51,
-        //     created: '2010-01-10'
-        //   }, {
-        //     id: 52,
-        //     created: '2010-01-20'
-        //   }, {
-        //     id: 53,
-        //     created: '2010-02-10'
-        //   }];
-
-        //   options.unshift([null, 'select...']);
-
-        //   // TODO: remove freshList from foreign list (or mark selected)
-
-        //   // build readable form from items <select><option></select>
-        //   // TODO: async url to load items
-        //   // add handler to select some item: insertItem to pahtLevels
-        //   // TODO: add search field for quick adding
-        // };
-
-    }, { "./controls-setter": 28, "./entity-list-wrapper": 35, "./helpers/microdata": 36, "./prop-factory": 40, "./prop-row": 41 }], 35: [function (require, module, exports) {
-        'use strict';
-
-        // const microdata = require('./helpers/microdata');
-
-        var SEPAR = '__';
-
-        module.exports = {
-            updateItems: function (elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
-                if (!elemSection) {
-                    throw new Error('required_elemSection');
-                }
-
-                // must be array
-                if (!entityList || Array.isArray(entityList) === false) {
-                    throw new Error('required_entityList_array');
-                }
-
-                var allPathLevels = ['root'].concat(pathLevels);
-
-                var ids = entityList.map(function (entity) {
-                    return allPathLevels.concat(entity[PRIMARY_KEY]).join(SEPAR) + '_content';
-                });
-
-                var currentElems = elemSection.children;
-
-                // delete excessive
-                for (var i = currentElems.length - 1; i >= 0; i -= 1) {
-                    var needElem = currentElems[i];
-
-                    if (ids.indexOf(needElem.id) < 0) {
-                        elemSection.removeChild(needElem);
-                    }
-                }
-
-                // update or insert
-                // TODO: index -> position
-                entityList.forEach(function (entity) {
-                    if (!entity) {
-                        throw new Error('required_entity');
-                    }
-
-                    var entityPathLevels = pathLevels.concat(entity[PRIMARY_KEY]);
-
-                    var elemEntity = buildEntityElem(elemSection, entityPathLevels, entitySchema, entity, typeCheckers, isGlobalDisplayOnly);
-
-                    var btn = elemEntity.querySelector('[data-action="removeItem"][data-entity-list-path="' + pathLevels.join('.') + '"]');
-
-                    if (!btn) {
-                        // TODO: if not exists
-                        var buttonRemoveItem = document.createElement('button');
-                        buttonRemoveItem.textContent = 'X';
-                        buttonRemoveItem.type = 'button';
-                        buttonRemoveItem.setAttribute('data-action', 'removeItem');
-                        var oidObject = {};
-                        oidObject[PRIMARY_KEY] = entity[PRIMARY_KEY];
-
-                        buttonRemoveItem.setAttribute('data-entity-oid', JSON.stringify(oidObject));
-                        buttonRemoveItem.setAttribute('data-entity-list-path', pathLevels.join('.'));
-                        elemEntity.appendChild(buttonRemoveItem);
-                    }
-                });
-            }
-        };
-    }, {}], 36: [function (require, module, exports) {
-        'use strict';
-
-        var helper = {};
-
-        helper.markEntity = function (entityElem, schemaName) {
-            entityElem.setAttribute('itemscope', '');
-            entityElem.setAttribute('itemtype', 'http://schema.org/' + schemaName);
-        };
-
-        helper.markProperty = function (propertyElem, propertyName, sameAsPropertyName) {
-            // like 'url contentUrl' for images
-            var val = propertyName + (sameAsPropertyName ? ' ' + sameAsPropertyName : '');
-
-            propertyElem.setAttribute('itemprop', val);
-        };
-
-        module.exports = helper;
-    }, {}], 37: [function (require, module, exports) {
-        /**
-         * Image
-         * ImageObject: { id: url, width: 100, height: 200, alt: 'asdf' }
-         */
-
-        'use strict';
-
-        module.exports = function () {
-            return document.createElement('img');
-        };
-    }, {}], 38: [function (require, module, exports) {
-        /** String label */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('span');
-            return elem;
-        };
-    }, {}], 39: [function (require, module, exports) {
-        /** Pick any number between min and max */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'number';
-            elem.placeholder = 'Число';
-            return elem;
-        };
-    }, {}], 40: [function (require, module, exports) {
-        /**
-         * A component factory, like document.createElement
-         *
-         * Name convention for custom elements:
-         * - two or more words
-         * - separated by dash
-         * - lowercase
-         * - Latin characters
-         *
-         * Boolean-input can be a selector, radio, simple input, etc.
-         * it depends of design of a project
-         *
-         * @todo switch to custom elements after release
-         * @todo use <template> to clone instead building elems from scratch
-         * @module
-         */
-
-        'use strict';
-
-        // at this moment it's not a class
-        // will be converted when custom elements will be released
-        // browserify doesnt support dynamic requires
-
-        var BooleanDisplay = require('./boolean-display');
-        var TextDisplay = require('./text-display');
-        var NumberDisplay = require('./number-display');
-        var DateDisplay = require('./date-display');
-        var UrlDisplay = require('./url-display');
-        var ImageDisplay = require('./image-display');
-
-        var BooleanInput = require('./boolean-input');
-        var TextInput = require('./text-input');
-        var NumberInput = require('./number-input');
-        var AgeInput = require('./age-input');
-        var DecadeInput = require('./decade-input');
-        var DateInput = require('./date-input');
-        var DurationInput = require('./duration-input');
-        var CountryInput = require('./country-input');
-
-        var calculateInput = function (tag) {
-            switch (tag) {
-                case 'boolean-input':
-                    return BooleanInput;
-                case 'text-input':
-                case 'url-input':
-                    return TextInput;
-                case 'number-input':
-                case 'integer-input':
-                case 'float-input':
-                    return NumberInput;
-                case 'age-input':
-                    return AgeInput;
-                case 'decade-input':
-                    return DecadeInput;
-                case 'date-input':
-                    return DateInput;
-                case 'duration-input':
-                    return DurationInput;
-                case 'country-input':
-                    return CountryInput;
-
-                default:
-                    throw new Error('tag_is_not_supported: ' + tag);
-            }
-        };
-
-        var calculateDisplay = function (tag) {
-            switch (tag) {
-                case 'boolean-display':
-                    return BooleanDisplay;
-                case 'text-display':
-                    return TextDisplay;
-                case 'url-display':
-                    return UrlDisplay;
-                case 'image-display':
-                    return ImageDisplay;
-                case 'number-display':
-                case 'integer-display':
-                case 'float-display':
-                case 'age-display':
-                    return NumberDisplay;
-                case 'date-display':
-                    return DateDisplay;
-                // case 'duration-display':
-                //   return DurationDisplay;
-
-                default:
-                    throw new Error('tag_is_not_supported: ' + tag);
-            }
-        };
-
-        module.exports = {
-            createInput: function (propType, typeChecker) {
-                var tag = propType.toLowerCase() + '-input';
-
-                var elemClass = calculateInput(tag);
-
-                var elem = elemClass({}, document, typeChecker); // empty props
-
-                elem.setAttribute('data-schema-type', propType);
-
-                // use classes instead tags, while no custom elements
-                elem.className = tag;
-                return elem;
-            },
-            createDisplay: function (propType, typeChecker) {
-                var tag = propType.toLowerCase() + '-display';
-
-                var elemClass = calculateDisplay(tag);
-
-                var elem = elemClass({}, document, typeChecker); // empty props
-
-                elem.setAttribute('data-schema-type', propType);
-
-                // use classes instead tags, while no custom elements
-                elem.className = tag;
-                return elem;
-            }
-        };
-    }, { "./age-input": 25, "./boolean-display": 26, "./boolean-input": 27, "./country-input": 29, "./date-display": 30, "./date-input": 31, "./decade-input": 32, "./duration-input": 33, "./image-display": 37, "./number-display": 38, "./number-input": 39, "./text-display": 42, "./text-input": 43, "./url-display": 44 }], 41: [function (require, module, exports) {
-        /**
-         Обёртка для свойства. Содержит:
-         - элемент с названием свойства
-         - элемент с контентом свойства
-        Дополнительно (на стороне разметки-представления)
-         - элемент, скрывающий/отображающий элемент с контентом свойства
-        */
-
-        'use strict';
-
-        module.exports = function (rowId) {
-            var row = document.createElement('fieldset');
-            row.id = rowId;
-            row.className = 'prop-row';
-            return row;
-        };
-    }, {}], 42: [function (require, module, exports) {
-        arguments[4][38][0].apply(exports, arguments);
-    }, { "dup": 38 }], 43: [function (require, module, exports) {
-        /** String input */
-
-        'use strict';
-
-        module.exports = function (props, doc) {
-            var elem = doc.createElement('input');
-            elem.type = 'text';
-            elem.placeholder = 'text';
-            return elem;
-        };
-    }, {}], 44: [function (require, module, exports) {
-        /** String label */
-
-        'use strict';
-
-        module.exports = function () {
-            return document.createElement('a');
-        };
-    }, {}], 45: [function (require, module, exports) {
+    }, { "moment": 47 }], 49: [function (require, module, exports) {
         'use strict';
 
         // Side modules
@@ -8666,7 +8767,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var pubsub = require('./pubsub');
         var initialState = require('./initial-state');
 
-        var store = new ComputedState(modelTemplate, 'identifier');
+        var store = new ComputedState(modelTemplate, 'url');
 
         store.update(initialState);
 
@@ -8716,7 +8817,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             needTab = 'offers';
         } else {
             // TODO: вычислить нужную вкладку, пока что первая
-            needTab = 'insuredPlaces';
+            needTab = 'insurants'; // 'insuredPlaces';
         }
 
         goToTab(needTab);
@@ -8744,29 +8845,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // buttonTabNext.textContent = 'Далее';
         // buttonTabNext.className = 'tab-next';
         // rootContent.appendChild(buttonTabNext);
-    }, { "../../vm-schema": 2, "./initial-state": 46, "./input-polyfill": 47, "./pubsub": 48, "computed-state": 17 }], 46: [function (require, module, exports) {
+    }, { "../../vm-schema": 2, "./initial-state": 50, "./input-polyfill": 51, "./pubsub": 52, "computed-state": 17 }], 50: [function (require, module, exports) {
         module.exports = {
-            identifier: 0,
+            url: 'main',
             name: 'Полис ВЗР',
             description: 'Электронный страховой полис для выезда за границу: страхование жизни и здоровья, имущества, ответственности и др.',
             insuredEvent: {
-                identifier: 0,
+                url: 'main',
                 durationMax: 'P1Y-1D', // 1 year - 1 day
                 startDate: '2017-03-03', // tomorrow
                 startDateMin: '2017-03-02', // today
                 isFixed: false
             },
             insurer: {
-                identifier: 0,
+                url: 'main',
                 age: 111
                 // query.insurer ? (parseInt(query.insurer.age) || null) : null
             },
             insurants: [{
-                identifier: 1,
+                url: 'p1',
                 name: 'Jane',
                 age: null
             }, {
-                identifier: 2,
+                url: 'p2',
                 name: 'John',
                 age: null
             }],
@@ -8779,7 +8880,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             //     visitDate: '2010-01-01'
             //   }]
         };
-    }, {}], 47: [function (require, module, exports) {
+    }, {}], 51: [function (require, module, exports) {
         /**
          * полифилл заменяет стандартный датапикер для соответствующих инпутов. При первой фокусировке - создаётся датапикер.
          * @todo firefox
@@ -8843,13 +8944,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         module.exports = {
             init: init
         };
-    }, { "pikaday": 24 }], 48: [function (require, module, exports) {
+    }, { "pikaday": 48 }], 52: [function (require, module, exports) {
         'use strict';
 
-        var entityBuilder = require('./controls/entity-builder');
+        var microdataGenerator = require('microdata-generator');
         var typeCheckers = require('../../vm-schema').types;
 
-        var PRIMARY_KEY = 'identifier';
+        var PRIMARY_KEY = 'url';
 
         var getTypedValue = function (elem) {
             switch (elem.type) {
@@ -9014,7 +9115,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             store.subscribe(function (changedKeys, stateFresh) {
                 // console.log('changedKeys TODO', changedKeys);
 
-                entityBuilder(rootContainer, [], 'FinancialProduct', stateFresh, typeCheckers,
+                microdataGenerator(rootContainer, [], 'FinancialProduct', stateFresh, typeCheckers,
                 // isGlobalDisplayOnly
                 false);
             });
@@ -9061,7 +9162,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // Связь поля с обёрткой - позже
         // Стэйт будет равен нулл, если корневая сущность ещё не создана
 
-        // const rootElemNew = entityBuilder({
+        // const rootElemNew = microdataGenerator({
         //   parentPathLevels: [],
         //   entitySettings: stateFresh.__settings,
         //   entitySchema: 'Policy',
@@ -9109,4 +9210,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         //   console.log('actionType', actionType);
         // });
-    }, { "../../vm-schema": 2, "./controls/entity-builder": 34 }] }, {}, [45]);
+    }, { "../../vm-schema": 2, "microdata-generator": 23 }] }, {}, [49]);

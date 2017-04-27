@@ -10,7 +10,7 @@ const ComputedState = require('computed-state');
 const modelTemplate = require('../../vm-schema').policySchema;
 const typeCheckers = require('../../vm-schema').types;
 
-const entityBuilder = require('../src/controls/entity-builder');
+const microdataGenerator = require('microdata-generator');
 
 const initialState = require('../src/initial-state');
 
@@ -71,13 +71,13 @@ module.exports = function (req, res) {
   // изначально - пустой объект
   // по идее для пустого объекта ничего не надо создавать
   // даже - нужно удалять существующую разметку
-  entityBuilder(rootContainer,
-                [],
-                'FinancialProduct',
-                entity,
-                typeCheckers,
-                // isGlobalDisplayOnly
-                false);
+  microdataGenerator(rootContainer,
+                     [],
+                     'FinancialProduct',
+                     entity,
+                     typeCheckers,
+                     // isGlobalDisplayOnly
+                     false);
 
   const script = doc.createElement('script');
   script.src = './dist/index.es6.js';

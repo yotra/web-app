@@ -8,7 +8,7 @@ const typeCheckers = require('../../vm-schema/index').types;
 
 const pubsub = require('../src/pubsub');
 
-const entityBuilder = require('../src/controls/entity-builder');
+const microdataGenerator = require('microdata-generator');
 
 const findPropertyElem = function(entityLayout, propertyName) {
   return entityLayout.querySelector('[itemprop=' + propertyName + ']');
@@ -44,12 +44,12 @@ describe('policy-markup-generator', function() {
       // }
     });
 
-    entityBuilder(container,
-                  [],
-                  'FinancialProduct',
-                  store.getEntity(),
-                  typeCheckers,
-                  false);
+    microdataGenerator(container,
+                       [],
+                       'FinancialProduct',
+                       store.getEntity(),
+                       typeCheckers,
+                       false);
 
     pubsub(container, store);
   });

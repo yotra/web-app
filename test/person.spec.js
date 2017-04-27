@@ -8,7 +8,7 @@ const typeCheckers = require('../../vm-schema').types;
 
 const pubsub = require('../src/pubsub');
 
-const entityBuilder = require('../src/controls/entity-builder');
+const microdataGenerator = require('microdata-generator');
 
 const findPropertyElem = function(entityLayout, propertyName) {
   return entityLayout.querySelector('[itemprop=' + propertyName + ']');
@@ -32,12 +32,12 @@ describe('person-markup-generator', function() {
       url: 'asdf'
     });
 
-    entityBuilder(container,
-                  [],
-                  'Person',
-                  store.getEntity(),
-                  typeCheckers,
-                  false);
+    microdataGenerator(container,
+                       [],
+                       'Person',
+                       store.getEntity(),
+                       typeCheckers,
+                       false);
 
     pubsub(container, store);
   });
