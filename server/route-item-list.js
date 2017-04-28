@@ -7,8 +7,7 @@ const jsdom = require('jsdom').jsdom;
 const serializeDocument = require('jsdom').serializeDocument;
 const ComputedState = require('computed-state');
 
-const modelTemplate = require('../../vm-schema').policySchema;
-const typeCheckers = require('../../vm-schema').types;
+const modelTemplate = require('../../vm-schema');
 
 const microdataGenerator = require('microdata-generator');
 
@@ -23,7 +22,7 @@ module.exports = function (req, res) {
 
   // TODO: extract url parameters
 
-  const store = new ComputedState(modelTemplate, 'identifier');
+  const store = new ComputedState(modelTemplate, 'url');
   store.update(initialState);
 
   const entity = store.getEntity();
@@ -75,7 +74,6 @@ module.exports = function (req, res) {
                      [],
                      'FinancialProduct',
                      entity,
-                     typeCheckers,
                      // isGlobalDisplayOnly
                      false);
 

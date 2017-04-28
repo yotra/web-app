@@ -4,8 +4,6 @@ const expect = require('chai').expect;
 
 const ComputedState = require('computed-state');
 const modelTemplate = require('./person');
-const typeCheckers = require('../../vm-schema').types;
-
 const pubsub = require('../src/pubsub');
 
 const microdataGenerator = require('microdata-generator');
@@ -36,7 +34,6 @@ describe('person-markup-generator', function() {
                        [],
                        'Person',
                        store.getEntity(),
-                       typeCheckers,
                        false);
 
     pubsub(container, store);

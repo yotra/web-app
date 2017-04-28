@@ -1,7 +1,8 @@
 'use strict';
 
 const microdataGenerator = require('microdata-generator');
-const typeCheckers = require('../../vm-schema').types;
+// TODO: extract from generator
+const microdataTypes = require('../../../ghb/microdata-types');
 
 const PRIMARY_KEY = 'url';
 
@@ -74,7 +75,7 @@ module.exports = function(rootContainer, store) {
     const itemProp = elem.getAttribute('itemprop');
 
     // validate propValue by schemaType
-    if (propValue !== null && typeCheckers[schemaType].isValid(propValue) === false) {
+    if (propValue !== null && microdataTypes[schemaType].isValid(propValue) === false) {
       alert('invalid_type: ' + schemaType + ' ' + propValue);
 
       // if store.value already null: nothing changes
@@ -172,7 +173,6 @@ module.exports = function(rootContainer, store) {
                        [],
                        'FinancialProduct',
                        stateFresh,
-                       typeCheckers,
                        // isGlobalDisplayOnly
                        false);
   });

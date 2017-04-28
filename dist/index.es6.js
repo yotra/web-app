@@ -1,22 +1,120 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = require('./src/types');
+
+},{"./src/types":3}],2:[function(require,module,exports){
+/* eslint-disable */
+
+'use strict';
+
+module.exports = [
+  {"id":"france"},
+  {"id":"finland"},
+  {"id":"estonia"}
+];
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+const allowedCountries = require('./data/countries');
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger#Polyfill
+Number.isInteger = Number.isInteger || function(value) {
+  return typeof value === 'number' &&
+    isFinite(value) &&
+    Math.floor(value) === value;
+};
+
+const isNumber = function(num) {
+  return (isNaN(num) === false) && isFinite(num);
+};
+
+module.exports = {
+  Boolean: {
+    isValid: function(value) {
+      return typeof value === 'boolean';
+    }
+  },
+  Text: {
+    isValid: function(value) {
+      return typeof value === 'string';
+    }
+  },
+  URL: {
+    isValid: function(value) {
+      // urls can be relative: /some-icon.png
+      // hard-coded most used length
+      return (typeof value === 'string' && value.length <= 2000);
+    }
+  },
+  // http://some-img.jpeg|alt=Welcome|width=200|height=100
+  Image: {
+    isValid: function(value) {
+      const parts = value.split('|');
+      const srcUrl = parts[0];
+      // TODO: check other parts
+      return typeof value === 'string' && srcUrl && srcUrl.length > 0;
+    }
+  },
+  Number: {
+    isValid: function(value) { return isNumber(value); }
+  },
+  Float: {
+    isValid: function(value) { return isNumber(value); }
+  },
+  Integer: {
+    isValid: function(value) { return Number.isInteger(value); }
+  },
+  Age: {
+    min: 0,
+    max: 120,
+    isValid: function(value) {
+      return (Number.isInteger(value) &&
+              value >= this.min && value <= this.max);
+    }
+  },
+  Decade: {
+    min: 1,
+    max: 10,
+    isValid: function(value) {
+      return (Number.isInteger(value) &&
+              value >= this.min && value <= this.max);
+    }
+  },
+  Country: {
+    allowed: allowedCountries,
+    isValid: function(value) {
+      const ids = this.allowed.map(function(c) {
+        return c.id;
+      });
+
+      return (typeof value === 'string' &&
+              ids.indexOf(value) >= 0);
+    }
+  },
+  Date: {
+    regExp: /^\d{4}-[01]\d-[0-3]\d$/,
+    isValid: function(value) { return this.regExp.test(value); }
+  },
+  Duration: {
+    regExp: /^P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)D)?$/,
+    isValid: function(value) { return this.regExp.test(value); }
+  }
+};
+
+// TODO: Date best validation
+// const m = moment(value, isoFormat, true);
+// return m.isValid();
+
+},{"./data/countries":2}],4:[function(require,module,exports){
 module.exports = {
   API_KEY: 'demokey',
   API_ENDPOINT: 'http://localhost/api'
 };
 
-},{}],2:[function(require,module,exports){
-'use strict';
+},{}],5:[function(require,module,exports){
+module.exports = require('./src/policy');
 
-// external API
-const policySchema = require('./src/policy');
-const types = require('./src/types');
-
-module.exports = {
-  policySchema: policySchema,
-  types: types
-};
-
-},{"./src/policy":15,"./src/types":16}],3:[function(require,module,exports){
+},{"./src/policy":18}],6:[function(require,module,exports){
 'use strict';
 
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -104,7 +202,7 @@ module.exports = function extend() {
 };
 
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 //! moment.js
 //! version : 2.18.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -4569,18 +4667,7 @@ return hooks;
 
 })));
 
-},{}],5:[function(require,module,exports){
-/* eslint-disable */
-
-'use strict';
-
-module.exports = [
-  {"id":"france","name":"Франция"},
-  {"id":"finland","name":"Финляндия"},
-  {"id":"estonia","name":"Эстония"}
-];
-
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 var moment = require('moment');
@@ -4692,7 +4779,7 @@ module.exports = {
   }
 };
 
-},{"./helpers/matcher":8,"moment":4}],7:[function(require,module,exports){
+},{"./helpers/matcher":11,"moment":7}],9:[function(require,module,exports){
 'use strict';
 
 // var xhr = require('request');
@@ -4756,7 +4843,29 @@ helper.load = function(endpoint, resolve, reject) {
 
 module.exports = helper;
 
-},{"./offers-response":9}],8:[function(require,module,exports){
+},{"./offers-response":12}],10:[function(require,module,exports){
+/* eslint-disable */
+
+'use strict';
+
+// data + translator
+const data = [
+  {"id":"france","name":"Франция"},
+  {"id":"finland","name":"Финляндия"},
+  {"id":"estonia","name":"Эстония"}
+];
+
+module.exports = {
+  getNameById: function(id) {
+    const country = data.filter(function(c) {
+      return c.id === id;
+    })[0];
+    
+    return country ? country.name : null;
+  }
+};
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var helper = {};
@@ -4891,7 +5000,7 @@ helper.uncoveredList = function(coveredList, originList) {
 
 module.exports = helper;
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /* eslint-disable */
 
 var response = {
@@ -4924,7 +5033,7 @@ var response = {
 
 module.exports = response;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var extend = require('extend');
 var person = require('./person');
 
@@ -4952,7 +5061,7 @@ extend(insurant, person, {
 
 module.exports = insurant;
 
-},{"./person":13,"extend":3}],11:[function(require,module,exports){
+},{"./person":16,"extend":6}],14:[function(require,module,exports){
 var extend = require('extend');
 var event = require('./event');
 
@@ -4967,8 +5076,8 @@ extend(insuredEvent, event, {
 
 module.exports = insuredEvent;
 
-},{"./event":6,"extend":3}],12:[function(require,module,exports){
-const typeCountry = require('./types').Country;
+},{"./event":8,"extend":6}],15:[function(require,module,exports){
+const countryProvider = require('./helpers/country-provider');
 
 // место действия полиса: страна, группа стран
 module.exports = {
@@ -4982,9 +5091,7 @@ module.exports = {
     type: 'Text',
     label: 'Страна',
     computed: ['url', function(identifier) {
-      return typeCountry.allowed.filter(function(c) {
-        return c.id === identifier;
-      })[0].name;
+      return countryProvider.getNameById(identifier);
     }]
   },
 
@@ -5020,7 +5127,7 @@ module.exports = {
   }
 };
 
-},{"./types":16}],13:[function(require,module,exports){
+},{"./helpers/country-provider":10}],16:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -5059,7 +5166,7 @@ module.exports = {
   // insurants: select * from insurants where personId = id
 };
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -5098,7 +5205,7 @@ module.exports = {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var extend = require('extend');
@@ -5343,103 +5450,10 @@ module.exports = {
 //   }]
 // }
 
-},{"../config":1,"./helpers/ajax-loader":7,"./insurant":10,"./insured-event":11,"./insured-place":12,"./person":13,"./policy-offer":14,"extend":3}],16:[function(require,module,exports){
-'use strict';
-
-const allowedCountries = require('./data/countries');
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger#Polyfill
-Number.isInteger = Number.isInteger || function(value) {
-  return typeof value === 'number' &&
-    isFinite(value) &&
-    Math.floor(value) === value;
-};
-
-const isNumber = function(num) {
-  return (isNaN(num) === false) && isFinite(num);
-};
-
-module.exports = {
-  Boolean: {
-    isValid: function(value) {
-      return typeof value === 'boolean';
-    }
-  },
-  Text: {
-    isValid: function(value) {
-      return typeof value === 'string';
-    }
-  },
-  URL: {
-    isValid: function(value) {
-      // urls can be relative: /some-icon.png
-      // hard-coded most used length
-      return (typeof value === 'string' && value.length <= 2000);
-    }
-  },
-  // http://some-img.jpeg|alt=Welcome|width=200|height=100
-  Image: {
-    isValid: function(value) {
-      const parts = value.split('|');
-      const srcUrl = parts[0];
-      // TODO: check other parts
-      return typeof value === 'string' && srcUrl && srcUrl.length > 0;
-    }
-  },
-  Number: {
-    isValid: function(value) { return isNumber(value); }
-  },
-  Float: {
-    isValid: function(value) { return isNumber(value); }
-  },
-  Integer: {
-    isValid: function(value) { return Number.isInteger(value); }
-  },
-  Age: {
-    min: 0,
-    max: 120,
-    isValid: function(value) {
-      return (Number.isInteger(value) &&
-              value >= this.min && value <= this.max);
-    }
-  },
-  Decade: {
-    min: 1,
-    max: 10,
-    isValid: function(value) {
-      return (Number.isInteger(value) &&
-              value >= this.min && value <= this.max);
-    }
-  },
-  Country: {
-    allowed: allowedCountries,
-    isValid: function(value) {
-      const ids = this.allowed.map(function(c) {
-        return c.id;
-      });
-
-      return (typeof value === 'string' &&
-              ids.indexOf(value) >= 0);
-    }
-  },
-  Date: {
-    regExp: /^\d{4}-[01]\d-[0-3]\d$/,
-    isValid: function(value) { return this.regExp.test(value); }
-  },
-  Duration: {
-    regExp: /^P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)D)?$/,
-    isValid: function(value) { return this.regExp.test(value); }
-  }
-};
-
-// TODO: Date best validation
-// const m = moment(value, isoFormat, true);
-// return m.isValid();
-
-},{"./data/countries":5}],17:[function(require,module,exports){
+},{"../config":4,"./helpers/ajax-loader":9,"./insurant":13,"./insured-event":14,"./insured-place":15,"./person":16,"./policy-offer":17,"extend":6}],19:[function(require,module,exports){
 module.exports = require('./src/computed-state');
 
-},{"./src/computed-state":18}],18:[function(require,module,exports){
+},{"./src/computed-state":20}],20:[function(require,module,exports){
 /** @module */
 
 'use strict';
@@ -5748,7 +5762,7 @@ class ComputedState {
 
 module.exports = ComputedState;
 
-},{"./computer":19,"./listener":21,"./setting":22}],19:[function(require,module,exports){
+},{"./computer":21,"./listener":23,"./setting":24}],21:[function(require,module,exports){
 /** @module */
 
 'use strict';
@@ -6308,7 +6322,7 @@ class Computer {
 
 module.exports = Computer;
 
-},{"./effect":20}],20:[function(require,module,exports){
+},{"./effect":22}],22:[function(require,module,exports){
 /** @module */
 
 'use strict';
@@ -6373,7 +6387,7 @@ class Effect {
 
 module.exports = Effect;
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /** @module */
 
 'use strict';
@@ -6407,7 +6421,7 @@ class Listener {
 
 module.exports = Listener;
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /**
  * Creates an internal object from readable settings
  * - async type
@@ -6560,10 +6574,10 @@ class Setting {
 
 module.exports = Setting;
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = require('./src/entity-builder');
 
-},{"./src/entity-builder":33}],24:[function(require,module,exports){
+},{"./src/entity-builder":35}],26:[function(require,module,exports){
 /** Pick any integer between min and max age */
 
 'use strict';
@@ -6575,7 +6589,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /** Boolean label */
 
 'use strict';
@@ -6594,7 +6608,7 @@ module.exports = {
   }
 };
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /** Checkbox */
 
 'use strict';
@@ -6612,7 +6626,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /** Country input */
 
 'use strict';
@@ -6638,7 +6652,7 @@ module.exports = function(typeChecker) {
   return elem;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /** Date as a string: YYYY-MM */
 
 'use strict';
@@ -6662,7 +6676,7 @@ module.exports = {
   }
 };
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /** @module */
 
 'use strict';
@@ -6681,7 +6695,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /** Pick any number between min and max */
 
 'use strict';
@@ -6695,7 +6709,7 @@ module.exports = function(typeChecker) {
   return elem;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /** String input */
 
 'use strict';
@@ -6709,7 +6723,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -6730,7 +6744,7 @@ module.exports = {
   }
 };
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Contains a list of simple inputs, according entity properties
  * @module
@@ -6741,6 +6755,7 @@ module.exports = {
 const propFactory = require('./prop-factory');
 const propSetter = require('./prop-setter');
 const microdata = require('./helpers/microdata');
+const microdataTypes = require('microdata-types');
 const propRow = require('./prop-row');
 
 const entityListWrapper = require('./entity-list-wrapper');
@@ -6784,7 +6799,6 @@ const destroyEntityElem = function(elemRow,
  * @param {Object} entity An object in computed-state format
  *        https://github.com/ivanRave/computed-state
  *        like 'student', 'person', 'thing', 'membership'
- * @param {Object} typeCheckers Validators for all property types
  * @param {Boolean} isGlobalDisplayOnly Read mode (no write mode)
  * @returns {Object} Fulfilled DOM element for this entity
  */
@@ -6792,12 +6806,7 @@ const buildEntityElem = function(elemRow,
                                  entityPathLevels,
                                  entitySchema,
                                  entity,
-                                 typeCheckers,
                                  isGlobalDisplayOnly) {
-  if (!typeCheckers) {
-    throw new Error('required_typeCheckers');
-  }
-
   const allPathLevels = ['root'].concat(entityPathLevels);
 
   const elemEntityId = allPathLevels.join(SEPAR) + '_content';
@@ -6828,7 +6837,7 @@ const buildEntityElem = function(elemRow,
 
   // console.log('elemEntityContent', elemEntityContent);
   // update or create
-  buildElementsFromSettings(elemEntity, entityPathLevels, entity, typeCheckers, isGlobalDisplayOnly); // eslint-disable-line
+  buildElementsFromSettings(elemEntity, entityPathLevels, entity, isGlobalDisplayOnly); // eslint-disable-line
 
   return elemEntity;
 };
@@ -6844,7 +6853,6 @@ const createElemInsertId = function(idPropType, typeChecker, pathLevels) {
 const findOrCreateElemSection = function(elemRow,
                                          elemSectionId,
                                          entitySettings,
-                                         typeCheckers,
                                          pathLevels,
                                          isGlobalDisplayOnly) {
   const elemExisting = elemRow.querySelector('#' + elemSectionId);
@@ -6864,7 +6872,7 @@ const findOrCreateElemSection = function(elemRow,
 
   const idPropType = idSetting.type; // 'Country' | 'Integer'
 
-  const typeChecker = typeCheckers[idPropType];
+  const typeChecker = microdataTypes[idPropType];
   if (!isGlobalDisplayOnly) {
     const elemInsertId = createElemInsertId(idPropType, typeChecker, pathLevels);
     // TODO: or in ItemList element, like [].push
@@ -6892,7 +6900,6 @@ const buildEntityListElem = function(elemRow,
                                      entitySchema,
                                      entitySettings,
                                      entityList,
-                                     typeCheckers,
                                      isGlobalDisplayOnly) {
   if (pathLevels.length < 1) {
     throw new Error('required_path_levels_non_empty');
@@ -6905,7 +6912,6 @@ const buildEntityListElem = function(elemRow,
   const elemSection = findOrCreateElemSection(elemRow,
                                               elemSectionId,
                                               entitySettings,
-                                              typeCheckers,
                                               pathLevels,
                                               isGlobalDisplayOnly);
 
@@ -6913,7 +6919,6 @@ const buildEntityListElem = function(elemRow,
                                 entityList,
                                 entitySchema,
                                 pathLevels,
-                                typeCheckers,
                                 isGlobalDisplayOnly,
                                 buildEntityElem,
                                 PRIMARY_KEY);
@@ -6938,8 +6943,7 @@ const buildSimpleElem = function(elemRow,
                                  propName,
                                  propType,
                                  propValue,
-                                 isDisplayOnly,
-                                 typeCheckers) {
+                                 isDisplayOnly) {
   const allPathLevels = ['root'].concat(parentPathLevels.concat(propName));
 
   const propContentId = allPathLevels.join(SEPAR) + '_content';
@@ -6947,7 +6951,7 @@ const buildSimpleElem = function(elemRow,
   let elemProp = elemRow.querySelector('#' + propContentId);
 
   if (!elemProp) {
-    const typeChecker = typeCheckers[propType];
+    const typeChecker = microdataTypes[propType];
 
     // a property is created, then - filled with data
     if (isDisplayOnly) {
@@ -6971,7 +6975,7 @@ const buildSimpleElem = function(elemRow,
   return elemProp;
 };
 
-const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly) {
+const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, propValue, isPropDisplayOnly) {
   if (!propName || !propSetting) {
     throw new Error('required_propName_propSetting');
   }
@@ -7013,7 +7017,6 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                              pathLevels,
                              childEntitySchema,
                              propValue,
-                             typeCheckers,
                              isPropDisplayOnly);
 
       // only root element without propName
@@ -7037,7 +7040,6 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                                  childEntitySchema,
                                  childEntitySettings,
                                  propValue || [],
-                                 typeCheckers,
                                  isPropDisplayOnly); // TODO: null array
     default:
       return buildSimpleElem(elemRow,
@@ -7045,8 +7047,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
                              propName,
                              propType,
                              propValue,
-                             isPropDisplayOnly,
-                             typeCheckers);
+                             isPropDisplayOnly);
   }
 };
 
@@ -7060,7 +7061,7 @@ const buildAnyElem = function(elemRow, propName, propSetting, parentPathLevels, 
  * @param {Object} entity Like { firtsName: 'Jane' }
  * @returns {Object[]} List of DOM elements
  */
-const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity, typeCheckers, isGlobalDisplayOnly) {
+const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity, isGlobalDisplayOnly) {
   if (!entity || !elemEntity) {
     // entityElement can not exist without an entity
     throw new Error('entity_and_elemEntity_must_exist');
@@ -7118,7 +7119,7 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
       //   throw new Error('not_realized_update_prop');
     }
 
-    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, typeCheckers, isPropDisplayOnly);
+    const anyElem = buildAnyElem(elemRow, propName, propSetting, parentPathLevels, propValue, isPropDisplayOnly);
 
     if (anyElem) {
       microdata.markProperty(anyElem, propName, propSetting.sameAsProperty);
@@ -7132,7 +7133,7 @@ const buildElementsFromSettings = function(elemEntity, parentPathLevels, entity,
 // props.entity
 module.exports = buildEntityElem;
 
-},{"./entity-list-wrapper":34,"./helpers/microdata":35,"./prop-factory":39,"./prop-row":40,"./prop-setter":41}],34:[function(require,module,exports){
+},{"./entity-list-wrapper":36,"./helpers/microdata":37,"./prop-factory":41,"./prop-row":42,"./prop-setter":43,"microdata-types":49}],36:[function(require,module,exports){
 'use strict';
 
 // const microdata = require('./helpers/microdata');
@@ -7141,7 +7142,7 @@ const SEPAR = '__';
 const microdata = require('./helpers/microdata');
 
 module.exports = {
-  updateItems: function(elemSection, entityList, entitySchema, pathLevels, typeCheckers, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
+  updateItems: function(elemSection, entityList, entitySchema, pathLevels, isGlobalDisplayOnly, buildEntityElem, PRIMARY_KEY) {
     if (!elemSection) {
       throw new Error('required_elemSection');
     }
@@ -7181,7 +7182,6 @@ module.exports = {
                                          entityPathLevels,
                                          entitySchema,
                                          entity,
-                                         typeCheckers,
                                          isGlobalDisplayOnly);
 
       microdata.markPropertyAsListItem(elemEntity, index + 1);
@@ -7207,7 +7207,7 @@ module.exports = {
   }
 };
 
-},{"./helpers/microdata":35}],35:[function(require,module,exports){
+},{"./helpers/microdata":37}],37:[function(require,module,exports){
 'use strict';
 
 const helper = {
@@ -7255,7 +7255,7 @@ helper.markPropertyAsListItem = function(elem, position) {
 
 module.exports = helper;
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * Image
  * ImageObject: { id: url, width: 100, height: 200, alt: 'asdf' }
@@ -7300,7 +7300,7 @@ module.exports = {
   }
 };
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /** String label */
 
 'use strict';
@@ -7309,7 +7309,7 @@ module.exports = function() {
   return document.createElement('span');
 };
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /** Pick any number between min and max */
 
 'use strict';
@@ -7321,7 +7321,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * A component factory, like document.createElement
  *
@@ -7453,7 +7453,7 @@ module.exports = {
   }
 };
 
-},{"./age-input":24,"./boolean-display":25,"./boolean-input":26,"./country-input":27,"./date-display":28,"./date-input":29,"./decade-input":30,"./duration-input":31,"./email-display":32,"./image-display":36,"./number-display":37,"./number-input":38,"./telephone-display":42,"./text-display":43,"./text-input":44,"./url-display":45,"./urlid-display":46}],40:[function(require,module,exports){
+},{"./age-input":26,"./boolean-display":27,"./boolean-input":28,"./country-input":29,"./date-display":30,"./date-input":31,"./decade-input":32,"./duration-input":33,"./email-display":34,"./image-display":38,"./number-display":39,"./number-input":40,"./telephone-display":44,"./text-display":45,"./text-input":46,"./url-display":47,"./urlid-display":48}],42:[function(require,module,exports){
 /**
  * A property wrapper:
  * - an element with property name
@@ -7469,7 +7469,7 @@ module.exports = function(rowId) {
   return row;
 };
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  * Set property value: input or display
  */
@@ -7589,7 +7589,7 @@ module.exports = {
   setDisplayValue: setDisplayValue
 };
 
-},{"./boolean-display":25,"./date-display":28,"./email-display":32,"./image-display":36,"./telephone-display":42,"./url-display":45,"./urlid-display":46}],42:[function(require,module,exports){
+},{"./boolean-display":27,"./date-display":30,"./email-display":34,"./image-display":38,"./telephone-display":44,"./url-display":47,"./urlid-display":48}],44:[function(require,module,exports){
 /**
  * Telephone number
  * LocalBusiness.telephone
@@ -7626,14 +7626,14 @@ module.exports = {
   }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 module.exports = function() {
   return document.createElement('span');
 };
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /** String input */
 
 'use strict';
@@ -7645,7 +7645,7 @@ module.exports = function() {
   return elem;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 // siteUrl=http://asdfasdf.asdf/123|superSite
@@ -7685,7 +7685,7 @@ module.exports = {
   }
 };
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -7705,9 +7705,15 @@ module.exports = {
   }
 };
 
-},{}],47:[function(require,module,exports){
-arguments[4][4][0].apply(exports,arguments)
-},{"dup":4}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
+arguments[4][1][0].apply(exports,arguments)
+},{"./src/types":51,"dup":1}],50:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"dup":2}],51:[function(require,module,exports){
+arguments[4][3][0].apply(exports,arguments)
+},{"./data/countries":50,"dup":3}],52:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"dup":7}],53:[function(require,module,exports){
 /*!
  * Pikaday
  *
@@ -8902,12 +8908,12 @@ arguments[4][4][0].apply(exports,arguments)
 
 }));
 
-},{"moment":47}],49:[function(require,module,exports){
+},{"moment":52}],54:[function(require,module,exports){
 'use strict';
 
 // Side modules
 const ComputedState = require('computed-state');
-const modelTemplate = require('../../vm-schema').policySchema;
+const modelTemplate = require('../../vm-schema');
 const inputPolyfill = require('./input-polyfill');
 const pubsub = require('./pubsub');
 const initialState = require('./initial-state');
@@ -8997,7 +9003,7 @@ tabs.forEach(function(tabName) {
 // buttonTabNext.className = 'tab-next';
 // rootContent.appendChild(buttonTabNext);
 
-},{"../../vm-schema":2,"./initial-state":50,"./input-polyfill":51,"./pubsub":52,"computed-state":17}],50:[function(require,module,exports){
+},{"../../vm-schema":5,"./initial-state":55,"./input-polyfill":56,"./pubsub":57,"computed-state":19}],55:[function(require,module,exports){
 module.exports = {
   url: 'main',
   name: 'Полис ВЗР',
@@ -9033,7 +9039,7 @@ module.exports = {
   //   }]
 };
 
-},{}],51:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 /**
  * полифилл заменяет стандартный датапикер для соответствующих инпутов. При первой фокусировке - создаётся датапикер.
  * @todo firefox
@@ -9096,11 +9102,12 @@ module.exports = {
   init: init
 };
 
-},{"pikaday":48}],52:[function(require,module,exports){
+},{"pikaday":53}],57:[function(require,module,exports){
 'use strict';
 
 const microdataGenerator = require('microdata-generator');
-const typeCheckers = require('../../vm-schema').types;
+// TODO: extract from generator
+const microdataTypes = require('../../../ghb/microdata-types');
 
 const PRIMARY_KEY = 'url';
 
@@ -9173,7 +9180,7 @@ module.exports = function(rootContainer, store) {
     const itemProp = elem.getAttribute('itemprop');
 
     // validate propValue by schemaType
-    if (propValue !== null && typeCheckers[schemaType].isValid(propValue) === false) {
+    if (propValue !== null && microdataTypes[schemaType].isValid(propValue) === false) {
       alert('invalid_type: ' + schemaType + ' ' + propValue);
 
       // if store.value already null: nothing changes
@@ -9271,7 +9278,6 @@ module.exports = function(rootContainer, store) {
                        [],
                        'FinancialProduct',
                        stateFresh,
-                       typeCheckers,
                        // isGlobalDisplayOnly
                        false);
   });
@@ -9367,4 +9373,4 @@ module.exports = function(rootContainer, store) {
   //   console.log('actionType', actionType);
   // });
 
-},{"../../vm-schema":2,"microdata-generator":23}]},{},[49]);
+},{"../../../ghb/microdata-types":1,"microdata-generator":25}]},{},[54]);
